@@ -6,20 +6,24 @@ import os
 
 class IWW:
     
-    configs = Configs()
 
-
-    def __init__(self):
+    def __init__(self, configs = Configs()):
+        
+        self.configs = configs
         
         pass
     
 
 
-    def extract(self):
+    def extract(self, edge = -1):
     
-    	ef.feed_extractor(self.configs.urls_dataset_path,self.configs.extractor_generated_data_directory_path)
-    
-    	pass
+        ef.feed_extractor(
+                self.configs.urls_dataset_path,
+                self.configs.extractor_generated_data_directory_path, 
+                edge)
+        #print(self.configs.extractor_generated_data_directory_path)
+        	
+        pass
     
     
     

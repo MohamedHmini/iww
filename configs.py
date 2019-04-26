@@ -22,7 +22,7 @@ class Configs:
             
                 self.project_path = os.path.realpath(os.path.abspath(os.path.dirname(current_file_directory)))
                 self.urls_dataset_path = os.path.realpath(os.path.join(self.project_path, 'datasets/webpages_urls.txt'))
-                self.destination_directory_path = os.path.realpath(os.path.join(self.project_path, 'datasets/extracted_data'))
+                self.extractor_generated_data_directory_path = os.path.realpath(os.path.join(self.project_path, 'datasets/extracted_data'))
             
         elif default == False:
             
