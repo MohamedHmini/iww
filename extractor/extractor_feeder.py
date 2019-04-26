@@ -23,14 +23,18 @@ def feed_extractor(urls_path, destination_directory):
         file_name = "%04d.json" % index
         destination = os.path.realpath(os.path.join(destination_directory,file_name))
         
-        cmd = 'node resources_extractor.js -s "%(url)s" -f "%(destination)s"' % {
-            'url': url,
-            'destination': destination,
-        }
+        if not os.path.exists(destination):
         
-        print(cmd)
-        
-        subprocess.call(cmd, shell=True)
+            cmd = 'node resources_extractor.js -s "%(url)s" -f "%(destination)s"' % {
+                'url': url,
+                'destination': destination,
+            }
+            
+            print(cmd)
+            
+            subprocess.call(cmd, shell=True)
+            
+            pass
         
         pass
     
