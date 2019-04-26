@@ -15,7 +15,13 @@ class Configs:
         pass
     
     
-    def set_configs(self, current_file_directory, default = False):
+    def set_configs(
+            self, 
+            current_file_directory = '',
+            project_path = '', 
+            urls_dataset_path = '', 
+            extractor_generated_data_directory_path = '', 
+            default = False):
     
     
         if default == True:
@@ -26,9 +32,14 @@ class Configs:
             
         elif default == False:
             
-            pass
+                self.project_path = project_path
+                self.urls_dataset_path = urls_dataset_path
+                self.extractor_generated_data_directory_path = extractor_generated_data_directory_path
+            
+            
         
         pass
+    
     
     pass
 
