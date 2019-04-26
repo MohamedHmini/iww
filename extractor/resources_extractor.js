@@ -188,7 +188,7 @@ commander
         })
 
         var document = {
-                "DOM":traversed_DOM_tree,
+		"DOM":traversed_DOM_tree,
                 "meta_data":meta_data
         }
 

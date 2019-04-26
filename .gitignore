@@ -1,4 +1,4 @@
 /extractor/test.json
 /extractor/node_modules
 /.vscode
-
+/datasets/extracted_data/*.json
