@@ -46,7 +46,7 @@ def feed_extractor(urls_path, destination_directory, edge):
 if __name__ == '__main__':
     
     destination_path = os.path.realpath(os.path.join(project_path, 'datasets/extracted_data'))
-    feed_extractor("../datasets/webpages_urls.txt",destination_path, 2)
+    feed_extractor("../datasets/webpages_urls.txt",destination_path, 1)
     
     pass
 

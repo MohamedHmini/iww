@@ -18,6 +18,8 @@ commander
         const page = await browser.newPage();
         await page.goto(commander.site);
         
+        await page.setViewport({ width: 1600, height: 4000});
+        
         const traversed_DOM_tree = await page.evaluate(()=>{
 
                 var set_dimensions = (node)=>{

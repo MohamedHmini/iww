@@ -1,6 +1,7 @@
 # this file is an example of how the IWW library should be used.
 
 from IWW import IWW
+from utilities.dom_mapper import DOM_Mapper as DM
 from configs import Configs
 import os
 
@@ -27,4 +28,15 @@ import os
 iww = IWW()
 
 iww.configs.set_configs(current_file_directory = __file__, default = True)
-iww.extract(edge = 2)
+#iww.extract(edge = 2)
+
+
+def display(node):
+    print(node['tagName'])
+    return node
+
+
+dm = DM()
+dm.retrieve_dom_tree(os.path.realpath('datasets/extracted_data/0000.json'))
+dm.map(node = dm.DOM, fun = display, option = 'DEPTH')
+
