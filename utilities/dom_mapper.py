@@ -1,6 +1,9 @@
 import os
 import json
-
+import numpy as np
+import pandas as pd
+pd.set_option('display.max_columns', 500)
+pd.set_option('display.max_rows', 100)
 
 
 
@@ -9,6 +12,8 @@ class DOM_Mapper:
     
     DOM = {}
     meta_data = {}
+    
+    DOM_arr = np.array([])
     
     
     def __init__(self):
@@ -26,6 +31,23 @@ class DOM_Mapper:
         self.meta_data = page_data['meta_data']
         
         file.close()
+        
+        pass
+    
+    
+    def update_DOM_tree(self):
+        
+        file = open(self.DOM_file_path, 'w', encoding = 'UTF-8')
+        
+        DOM_str = json.dumps({
+                'DOM':self.DOM,
+                'meta_data':self.meta_data
+                })
+        
+        file.write(DOM_str)
+        
+        file.close()
+        
         pass
     
     
@@ -70,37 +92,42 @@ class DOM_Mapper:
     
     
     
-    def update_DOM_tree(self):
+    def toArray(self, DOM_arr_features):
         
-        file = open(self.DOM_file_path, 'w', encoding = 'UTF-8')
+        self.DOM_arr_features = DOM_arr_features
+        self.map(node = self.DOM, fun1 = self.__toArray)
         
-        DOM_str = json.dumps({
-                'DOM':self.DOM,
-                'meta_data':self.meta_data
-                })
-        
-        file.write(DOM_str)
-        
-        file.close()
+        return self.DOM_arr
         
         pass
     
     
-    def test(self, arg):
-        print("from parent : {}".format(arg))
+    def __toArray(self, node):
         
-    
+        features_values = []
+        
+        for feature in self.DOM_arr_features:
+            
+            features_values.append(node[feature])
+            
+            pass
+        
+        arr = np.array([features_values])    
+        
+        if self.DOM_arr.shape == (0,):
+            self.DOM_arr = arr            
+        else:
+            self.DOM_arr = np.concatenate((self.DOM_arr,arr), axis = 0)
+        
+        return node
         
         pass
+    
     
     
     pass
 
 
-def p(node):
-    
-    print(node['tagName'])
-    return node
 
 
 if __name__ == '__main__':
@@ -109,8 +136,16 @@ if __name__ == '__main__':
 
     dr.retrieve_DOM_tree('../datasets/extracted_data/0000.json')
     
-    dr.map(node = dr.DOM, fun1 = p) 
+    #dr.map(node = dr.DOM, fun1 = p) 
     #dr.map(node = dr.DOM, fun = )
+    #dom_copy = dr.DOM.copy()
     
+    #dr.map(node = dr.DOM, fun1 = dr.toArray)
+    
+    columns = ['tagName','tagsCount', 'textDensity', 'densitySum']
+    
+    dr.toArray(columns)
+    
+    print(pd.DataFrame(dr.DOM_arr, columns = columns))
     
     pass

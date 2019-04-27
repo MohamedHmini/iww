@@ -1,6 +1,5 @@
 import extractor.extractor_feeder as ef
-from configs import Configs
-import os
+from configs import Config
 
 
 

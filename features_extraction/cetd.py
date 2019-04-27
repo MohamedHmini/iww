@@ -50,10 +50,6 @@ class CETD(DOM_Mapper):
         pass
     
     
-    def test(self, arg):
-        print("from child {}".format(arg))
-        pass
-    
     
     pass
 
