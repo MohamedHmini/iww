@@ -2,6 +2,7 @@ import os
 import json
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.max_rows', 100)
 
@@ -23,9 +24,10 @@ class DOM_Mapper:
     
     def retrieve_DOM_tree(self, file_path):
     
-        self.DOM_file_path = os.path.realpath(file_path)
+        self.DOM_file_path = os.path.realpath(file_path)        
+        self.DOM_file_name = os.path.basename(self.DOM_file_path).split('.json')[0]
         
-        file = open(file_path, 'r', encoding = 'UTF-8')
+        file = open(self.DOM_file_path, 'r', encoding = 'UTF-8')
         page_data = json.load(file)
         self.DOM = page_data['DOM']
         self.meta_data = page_data['meta_data']
@@ -51,6 +53,9 @@ class DOM_Mapper:
         pass
     
     
+    
+    ###################### MAPPER : ##########################
+
     
     def map(self, node = None, 
             fun1 = (lambda x: x), 
@@ -90,6 +95,51 @@ class DOM_Mapper:
         # ...
         pass
     
+    ###########################################################
+    
+    
+    
+    ###################### REDUCER : ##########################
+    def reduce(self, node = None, 
+            fun1 = (lambda x: x), 
+            fun2 = (lambda x: x), 
+            option = 'DEPTH'):
+        
+        if option == 'DEPTH':
+            self.depth_reducer(node, fun1, fun2)
+        elif option == 'BREADTH':
+            self.breadth_reducer(node, fun1, fun2)
+        else:
+            print('ERR: option "%(option)s" is not available!' % {'option':option})
+        
+        pass
+    
+    
+    def depth_reducer(self, node, fun1, fun2):
+        
+        node = fun1(node)
+        
+        for child in node['children']:
+            self.depth_reducer(child, fun1, fun2)
+            
+        node = fun2(node)
+        
+        pass
+    
+    
+    
+    
+    def breadth_reducer(self, node, fun1, fun2):
+        # ...
+        pass
+    
+    ###########################################################
+  
+    
+    
+    def relative_position(self, node):
+        # ...
+        pass
     
     
     def toArray(self, DOM_arr_features):
@@ -124,6 +174,34 @@ class DOM_Mapper:
         pass
     
     
+    def retrieve_DOM_arr_file(self, file_path):
+        
+        df = pd.read_csv(file_path)
+        
+        self.DOM_file_name = os.path.basename(file_path).split(".csv")[0]
+        self.DOM_arr_features = df.columns[1:]
+        self.DOM_arr = df.values[:,1:]
+        
+        return self.DOM_arr
+        
+        pass
+    
+    
+    def update_DOM_arr_file(self, arr, directory, file_name = None):
+        
+        if file_name == None:
+            file_name = self.DOM_file_name + ".csv"
+        
+        
+        file_path = os.path.realpath(os.path.join(os.path.abspath(directory), file_name))
+        
+        df = pd.DataFrame(arr, columns = self.DOM_arr_features)
+        df.to_csv(file_path)
+    
+        
+        pass
+    
+    
     
     pass
 
@@ -134,7 +212,7 @@ if __name__ == '__main__':
     
     dr = DOM_Mapper()
 
-    dr.retrieve_DOM_tree('../datasets/extracted_data/0000.json')
+    #dr.retrieve_DOM_tree('../datasets/extracted_data/0000.json')
     
     #dr.map(node = dr.DOM, fun1 = p) 
     #dr.map(node = dr.DOM, fun = )
@@ -142,10 +220,17 @@ if __name__ == '__main__':
     
     #dr.map(node = dr.DOM, fun1 = dr.toArray)
     
-    columns = ['tagName','tagsCount', 'textDensity', 'densitySum']
+    #columns = ['tagName','tagsCount', 'textDensity', 'densitySum']
     
-    dr.toArray(columns)
+    #dr.toArray(columns)
+    #dr.update_DOM_arr_file(arr = dr.DOM_arr, directory = '../datasets/DOM_arrs/')
     
-    print(pd.DataFrame(dr.DOM_arr, columns = columns))
+    #arr = pd.read_csv(os.path.realpath('../datasets/DOM_arrs/0000.csv'))
+    
+    arr = dr.retrieve_DOM_arr_file('../datasets/DOM_arrs/0000.csv')
+    print(dr.DOM_arr_features)
+    print(arr)
+    
+    #print(pd.DataFrame(dr.DOM_arr, columns = columns))
     
     pass

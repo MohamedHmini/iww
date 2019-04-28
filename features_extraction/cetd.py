@@ -30,25 +30,45 @@ class CETD(DOM_Mapper):
         pass
     
     
-    def calculate_text_density(self, node):
+    def text_density(self, node):
+        tagsCount = (node['tagsCount'] if node['tagsCount'] > 0 else 1)
+        node['textDensity'] = len(node['text'])/tagsCount
         
-        node['textDensity'] = len(node['text'])/(node['tagsCount'] if node['tagsCount'] > 0 else 1)  
         return node
         
         pass
     
     
-    def calculate_density_sum(self, node):
+    def density_sum(self, node):
           
         node['densitySum'] = 0
         for child in node['children']:            
-            self.calculate_density_sum(child)
+            self.density_sum(child)
             node['densitySum'] += child['textDensity']
-            
-            
         
         pass
     
+    
+    def thresholding(self, node):
+        #...        
+        pass
+    
+    
+    def mark_content(self, node):
+        #...
+        pass
+    
+    
+    
+    def visual_importance(self, node):
+        #...
+        pass
+    
+    
+    def hybrid_text_density(self, node):
+        
+        
+        pass
     
     
     pass
@@ -60,9 +80,9 @@ if __name__ == '__main__':
     #cetd.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0000.json'))
     #cetd.count_tags(cetd.DOM)
     
-    #cetd.map(node = cetd.DOM, fun1 = cetd.calculate_text_density)
+    #cetd.map(node = cetd.DOM, fun1 = cetd.text_density)
     #cetd.update_DOM_tree()
-    #cetd.calculate_density_sum(cetd.DOM)
+    #cetd.density_sum(cetd.DOM)
     
     pass
 

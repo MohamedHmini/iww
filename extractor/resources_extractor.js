@@ -107,6 +107,7 @@ commander
 
                         var counter = 0
                         childs.forEach(child=>{
+                                // consider NOSCRIPT & BR!
                                 if(child.nodeType == 1 && child.tagName != "SCRIPT" && child.tagName != "STYLE"){
                                         var doc_child = traverse_DOM_tree(child,doc.xpath,"["+counter+"]")
                                         doc.children.push(doc_child)
