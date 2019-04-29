@@ -2,3 +2,4 @@
 /extractor/node_modules
 /.vscode
 /datasets/extracted_data/*.json
+/datasets/DOM_arrs/*.csv

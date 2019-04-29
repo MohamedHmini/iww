@@ -202,6 +202,52 @@ class DOM_Mapper:
         pass
     
     
+    def search_DOM_node(self, node, att, value):
+        
+        if node[att] == value:
+            return node
+        
+        for child in node['children']:
+            found = self.search_DOM_node(child, att, value)
+            if found != None:
+                return found
+            
+        return None
+        
+        pass
+    
+    
+    def xpath_based_node_search(self, node, searched_xpath, current_xpath_position = "/BODY"):
+        
+        
+        if searched_xpath == '':
+            return None
+        
+        return self.__xpath_based_node_search(node, searched_xpath, current_xpath_position)
+        
+        pass
+    
+    
+    def __xpath_based_node_search(self, node, searched_xpath, current_xpath_position = "/BODY"):
+        
+        elements = searched_xpath.split(current_xpath_position)
+        
+        if elements[1] == '':
+            return node
+        
+        next_node = elements[1].split("/")[1]
+        next_node_pos = next_node.split("[")
+        next_node_pos = (next_node_pos[0], int(next_node_pos[1].split("]")[0]))
+        
+        found = self.xpath_based_node_search(node['children'][next_node_pos[1]], searched_xpath, current_xpath_position + "/" + next_node)
+        
+        return found
+        
+        pass
+    
+    
+    
+    
     
     pass
 
@@ -210,7 +256,7 @@ class DOM_Mapper:
 
 if __name__ == '__main__':
     
-    dr = DOM_Mapper()
+    #dr = DOM_Mapper()
 
     #dr.retrieve_DOM_tree('../datasets/extracted_data/0000.json')
     
@@ -220,16 +266,18 @@ if __name__ == '__main__':
     
     #dr.map(node = dr.DOM, fun1 = dr.toArray)
     
-    #columns = ['tagName','tagsCount', 'textDensity', 'densitySum']
+    #columns = ['tagName','xpath']
     
-    #dr.toArray(columns)
+    #arr = dr.toArray(columns)
     #dr.update_DOM_arr_file(arr = dr.DOM_arr, directory = '../datasets/DOM_arrs/')
     
     #arr = pd.read_csv(os.path.realpath('../datasets/DOM_arrs/0000.csv'))
     
-    arr = dr.retrieve_DOM_arr_file('../datasets/DOM_arrs/0000.csv')
-    print(dr.DOM_arr_features)
-    print(arr)
+    #arr = dr.retrieve_DOM_arr_file('../datasets/DOM_arrs/0000.csv')
+    #print(dr.DOM_arr_features)
+    
+    
+    #print(dr.xpath_based_node_search(dr.DOM, "/BODY/DIV[0]/NOSCRIPT[17]"))
     
     #print(pd.DataFrame(dr.DOM_arr, columns = columns))
     

@@ -102,7 +102,8 @@ commander
                                 "atts":atts,
                                 "style":computed_styles,
                                 "dimensions":dimensions,
-                                "xpath":xpath+"/"+node.tagName+index
+                                "xpath":xpath+"/"+node.tagName+index,
+                                "parent_xpath":xpath
                         }
 
                         var counter = 0
