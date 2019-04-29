@@ -1,5 +1,8 @@
 import sys
 import os
+import pandas as pd
+pd.set_option('display.max_columns', 500)
+pd.set_option('display.max_rows', 100)
 
 sys.path.append(os.path.realpath(os.path.abspath('../utilities')))
 
@@ -88,9 +91,37 @@ class CETD(DOM_Mapper):
         
         pass
     
+   
     
-    def mark_content(self, node):
-        #...
+    def find_max_density_sum_tag(self, node):
+        
+        target = self.search_DOM_node(node, 'densitySum', self.max_density_sum)   
+        
+        if target['mark'] == 1:
+            return None
+        
+        self.mark_DOM_node(target, 1)
+        
+        parent = self.xpath_based_node_search(self.DOM, target['parent_xpath'])
+        
+        while parent != None:        
+                
+            parent['mark'] = 2            
+            parent = self.xpath_based_node_search(self.DOM, parent['parent_xpath'])
+            
+            pass
+        
+        pass
+    
+    
+    def mark_content(self, node, threshold):
+        
+        if node['mark'] != 1 and (node['textDensity'] - threshold) > -1:
+            self.find_max_density_sum_tag(node)
+                
+            for child in node['children']:
+                self.mark_content(child, threshold)
+        
         pass
     
     
@@ -101,8 +132,7 @@ class CETD(DOM_Mapper):
     
     
     def hybrid_text_density(self, node):
-        
-        
+        #...
         pass
     
     
@@ -111,16 +141,19 @@ class CETD(DOM_Mapper):
 
 if __name__ == '__main__':
     
-    cetd = CETD()
-    cetd.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0000.json'))
-    cetd.count_tags(cetd.DOM)
+    #cetd = CETD()
+    #cetd.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0000.json'))
+    #cetd.count_tags(cetd.DOM)
     
-    cetd.map(node = cetd.DOM, fun1 = cetd.text_density)
+    #cetd.map(node = cetd.DOM, fun1 = cetd.text_density)
     #cetd.update_DOM_tree()
-    cetd.density_sum(cetd.DOM)
-    #arr = cetd.toArray(['tagName','textDensity','densitySum','parent_xpath'])
+    #cetd.density_sum(cetd.DOM)
+    #cetd.thresholding()
+    #cetd.mark_content(cetd.DOM, cetd.threshold)
     
-    print(cetd.thresholding())
+    #arr = cetd.toArray(['tagName','textDensity','densitySum','mark'])
+    #df = pd.DataFrame(arr, columns = ['tagName','textDensity','densitySum','mark'])
+    print(df[df['mark'] != "1"])
     pass
 
 
