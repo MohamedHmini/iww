@@ -21,32 +21,40 @@ commander
         await page.setViewport({ width: 1600, height: 4000});
         
         const traversed_DOM_tree = await page.evaluate(()=>{
+        
 
                 var set_dimensions = (node)=>{
-                        var bounds = {}
+                        var dimensions = {}
 
-                        bounds['offsetWidth'] = node.offsetWidth;
-                        bounds['offsetHeight'] = node.offsetHeight;
-                        bounds['offsetTop'] = node.offsetTop;
-                        bounds['offsetLeft'] = node.offsetLeft;
+                        dimensions['offsetWidth'] = node.offsetWidth;
+                        dimensions['offsetHeight'] = node.offsetHeight;
+                        dimensions['offsetTop'] = node.offsetTop;
+                        dimensions['offsetLeft'] = node.offsetLeft;
 
-                        bounds['marginTop'] = node.style.marginTop
-                        bounds['marginBottom'] = node.style.marginBottom
-                        bounds['marginRight'] = node.style.marginRight
-                        bounds['marginLeft'] = node.style.marginLeft
+                        dimensions['marginTop'] = node.style.marginTop
+                        dimensions['marginBottom'] = node.style.marginBottom
+                        dimensions['marginRight'] = node.style.marginRight
+                        dimensions['marginLeft'] = node.style.marginLeft
 
-                        bounds['paddingTop'] = node.style.paddingTop
-                        bounds['paddingBottom'] = node.style.paddingBottom
-                        bounds['paddingRight'] = node.style.paddingRight
-                        bounds['paddingLeft'] = node.style.paddingLeft
+                        dimensions['paddingTop'] = node.style.paddingTop
+                        dimensions['paddingBottom'] = node.style.paddingBottom
+                        dimensions['paddingRight'] = node.style.paddingRight
+                        dimensions['paddingLeft'] = node.style.paddingLeft
+                        
+                        dimensions['borderRightWidth'] = node.style.borderRightWidth
+                        dimensions['borderLeftWidth'] = node.style.borderLeftWidth
+                        dimensions['borderBottomWidth'] = node.style.borderBottomWidth
+                        dimensions['borderTopWidth'] = node.style.borderTopWidth
 
-                        bounds['top'] = node.style.top
-                        bounds['left'] = node.style.left
-                        bounds['scrollHeight'] = node.scrollHeight
-                        bounds['scrollWidth'] = node.scrollWidth
+                        dimensions['top'] = node.style.top
+                        dimensions['left'] = node.style.left
+                        dimensions['scrollHeight'] = node.scrollHeight
+                        dimensions['scrollWidth'] = node.scrollWidth
+                        
+                        dimensions['zIndex'] = node.style.zIndex
 
 
-                        return bounds;
+                        return dimensions;
                 }
 
 
@@ -102,6 +110,7 @@ commander
                                 "atts":atts,
                                 "style":computed_styles,
                                 "dimensions":dimensions,
+                                "bounds":node.getBoundingClientRect().toJSON(),
                                 "xpath":xpath+"/"+node.tagName+index,
                                 "parent_xpath":xpath
                         }
@@ -200,6 +209,7 @@ commander
 
         // console.log(document)
 	await browser.close();
+	
 })();
 
 

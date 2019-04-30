@@ -98,7 +98,7 @@ class DOM_Mapper:
     
     
     
-    ###################### REDUCER : ##########################
+    ###################### REDUCER : DOESN'T WORK YET ##########################
     def reduce(self, node = None, 
             fun1 = (lambda x: x), 
             fun2 = (lambda x: x), 
@@ -141,9 +141,9 @@ class DOM_Mapper:
         pass
     
     
-    def toArray(self, DOM_arr_features):
+    def toArray(self, features):
         
-        self.DOM_arr_features = DOM_arr_features
+        self.DOM_arr_features = features
         self.map(node = self.DOM, fun1 = self.__toArray)
         
         return self.DOM_arr
@@ -255,9 +255,13 @@ class DOM_Mapper:
 
 if __name__ == '__main__':
     
-    #dr = DOM_Mapper()
+    dr = DOM_Mapper()
 
-    #dr.retrieve_DOM_tree('../datasets/extracted_data/0000.json')
+    dr.retrieve_DOM_tree('../datasets/extracted_data/0000.json')
+    dr.DOM['children'] = ''
+    dr.DOM['style'] = ''
+    dr.DOM['text'] = ''
+    print(dr.DOM)
     
     #dr.map(node = dr.DOM, fun1 = p) 
     #dr.map(node = dr.DOM, fun = )

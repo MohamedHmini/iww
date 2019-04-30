@@ -9,12 +9,37 @@ project_path = os.path.realpath(os.path.join(os.path.abspath(os.path.dirname(__f
 
 
 
-def feed_extractor(urls_path, destination_directory, edge):
+
+def get_urls(urls_path, edge):
     
     urls_dataset_file = open(urls_path,'r')    
     urls_dataset = urls_dataset_file.readlines()
     urls_dataset = [url[:-1] if url[-1] == '\n' else url for url in urls_dataset[:edge]]
     urls_dataset_file.close()
+    
+    return urls_dataset
+
+    pass
+
+
+
+def CMD(url, destination):
+    
+    cmd = 'node resources_extractor.js -s "%(url)s" -f "%(destination)s"' % {
+                'url': url,
+                'destination': destination,
+            }
+            
+            
+    subprocess.call(cmd, shell=True)
+    
+    pass
+
+
+
+def feed_extractor(urls_path, destination_directory, edge):
+    
+    urls_dataset = get_urls(urls_path, edge)
         
     enumerated = enumerate(urls_dataset)
     
@@ -26,20 +51,17 @@ def feed_extractor(urls_path, destination_directory, edge):
         
         if os.path.exists(destination) == False:
         
-            cmd = 'node resources_extractor.js -s "%(url)s" -f "%(destination)s"' % {
-                'url': url,
-                'destination': destination,
-            }
+            CMD(url, destination)
             
-            print(index)
-            
-            subprocess.call(cmd, shell=True)
             pass
         
         pass
     
     
     pass
+
+
+
 
 
 
