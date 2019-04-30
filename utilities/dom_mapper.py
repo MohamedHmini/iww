@@ -6,12 +6,24 @@ pd.set_option('display.max_columns', 500)
 pd.set_option('display.max_rows', 100)
 
 
+class DotDict(dict):
+    def __getattr__(self, item):
+        if item in self:
+            return self[item]
+        raise AttributeError
+
+    def __setattr__(self, key, value):
+        if key in self:
+            self[key] = value
+            return
+        raise AttributeError
+
 
 class DOM_Mapper:
     
     
     DOM = {}
-    meta_data = {}
+    meta_data = DotDict({})
     
     DOM_arr = np.array([])
     
@@ -29,7 +41,7 @@ class DOM_Mapper:
         file = open(self.DOM_file_path, 'r', encoding = 'UTF-8')
         page_data = json.load(file)
         self.DOM = page_data['DOM']
-        self.meta_data = page_data['meta_data']
+        self.meta_data = DotDict(page_data['meta_data'])
         
         file.close()
         
@@ -48,6 +60,27 @@ class DOM_Mapper:
         file.write(DOM_str)
         
         file.close()
+        
+        pass
+    
+    
+    def toDotDict(self):
+        
+        self.map(self.DOM, fun1 = self.__toDotDict) 
+        
+        pass
+    
+    
+    def __toDotDict(self, node):
+        
+        node = DotDict(node)
+        #node.atts = DotDict(node.atts)
+        #node.style = DotDict(node.style)
+        node.bounds = DotDict(node.bounds)
+        node['test'] = "works"
+        node.dimensions = DotDict(node.dimensions)
+        
+        return node
         
         pass
     
@@ -100,35 +133,35 @@ class DOM_Mapper:
     
     ###################### REDUCER : DOESN'T WORK YET ##########################
     def reduce(self, node = None, 
-            fun1 = (lambda x: x), 
-            fun2 = (lambda x: x), 
+            fun = (lambda x,y: x), 
             option = 'DEPTH'):
         
         if option == 'DEPTH':
-            self.depth_reducer(node, fun1, fun2)
+            return self.depth_reducer(node, fun)
         elif option == 'BREADTH':
-            self.breadth_reducer(node, fun1, fun2)
+            return self.breadth_reducer(node, fun)
         else:
             print('ERR: option "%(option)s" is not available!' % {'option':option})
         
         pass
     
     
-    def depth_reducer(self, node, fun1, fun2):
+    def depth_reducer(self, node, fun):
         
-        node = fun1(node)
+        val = node 
         
-        for child in node['children']:
-            self.depth_reducer(child, fun1, fun2)
-            
-        node = fun2(node)
+        for child in node['children']:            
+            self.depth_reducer(child, fun)
+            val = fun(val, child)
+                    
+        return val
         
         pass
     
     
     
     
-    def breadth_reducer(self, node, fun1, fun2):
+    def breadth_reducer(self, node, fun):
         # ...
         pass
     
@@ -251,6 +284,17 @@ class DOM_Mapper:
     pass
 
 
+def m(n1, n2):
+    
+    maxi = n1
+    
+    if maxi['bounds']['top'] > n2['bounds']['top']:
+        maxi = n2
+    
+    return maxi
+    
+    pass
+
 
 
 if __name__ == '__main__':
@@ -258,10 +302,10 @@ if __name__ == '__main__':
     dr = DOM_Mapper()
 
     dr.retrieve_DOM_tree('../datasets/extracted_data/0000.json')
-    dr.DOM['children'] = ''
-    dr.DOM['style'] = ''
-    dr.DOM['text'] = ''
-    print(dr.DOM)
+    #dr.toDotDict()
+    maxi = dr.reduce(dr.DOM, fun = m)
+    print(maxi['bounds']['top'])
+    #print(type(dr.DOM))
     
     #dr.map(node = dr.DOM, fun1 = p) 
     #dr.map(node = dr.DOM, fun = )
