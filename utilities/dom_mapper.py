@@ -131,7 +131,7 @@ class DOM_Mapper:
     
     
     
-    ###################### REDUCER : DOESN'T WORK YET ##########################
+    ###################### REDUCER : ##########################
     def reduce(self, node = None, 
             fun = (lambda x,y: x), 
             option = 'DEPTH'):
