@@ -60,13 +60,17 @@ commander
 
                 var setAtts = (node)=>{
 
-                        var atts = [];
+                        var atts = {};
 
                         for(i = 0;i < node.attributes.length;i++){
-                                atts.push({
-                                        "name":node.attributes[i].name,
-                                        "value":node.attributes[i].value
-                                })
+                        
+                                var name = node.attributes[i].name;
+                                var value = node.attributes[i].value;
+                        
+                                if(name == "class")
+                                    value = value.split(" ")
+                        
+                                atts[name] = value
                         } 
 
                         return atts;
@@ -83,6 +87,7 @@ commander
 
                                 var name = acquired_computed_styles.item(i);
                                 var value = acquired_computed_styles.getPropertyValue(name);
+
 
                                 computed_styles.push({
                                         "name":name,
@@ -102,7 +107,7 @@ commander
                         var dimensions = set_dimensions(node)
                         var computed_styles = setComputedSyles(node);                        
                         
-
+                        
                         var doc = {
                                 "tagName":node.tagName,
                                 "children":[],

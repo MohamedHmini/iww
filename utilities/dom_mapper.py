@@ -6,6 +6,8 @@ pd.set_option('display.max_columns', 500)
 pd.set_option('display.max_rows', 100)
 
 
+
+
 class DotDict(dict):
     def __getattr__(self, item):
         if item in self:
@@ -19,13 +21,14 @@ class DotDict(dict):
         raise AttributeError
 
 
+
 class DOM_Mapper:
     
     
     DOM = {}
-    meta_data = DotDict({})
-    
+    meta_data = DotDict({})    
     DOM_arr = np.array([])
+    
     
     
     def __init__(self):
@@ -94,6 +97,7 @@ class DOM_Mapper:
             fun2 = (lambda x, y: (x,y)), 
             fun3 = (lambda x, y: (x,y)), 
             fun4 = (lambda x: x), 
+            args = [],
             option = 'DEPTH'):
         
         if option == 'DEPTH':
@@ -132,8 +136,9 @@ class DOM_Mapper:
     
     
     ###################### REDUCER : ##########################
+    
     def reduce(self, node = None, 
-            fun = (lambda x,y: x), 
+            fun = (lambda x,y: x),
             option = 'DEPTH'):
         
         if option == 'DEPTH':
@@ -171,6 +176,11 @@ class DOM_Mapper:
     
     def relative_position(self, node):
         # ...
+        pass
+    
+    
+    def getFeature(self, path):
+        #...
         pass
     
     
@@ -280,20 +290,47 @@ class DOM_Mapper:
     
     
     
+    def siblings(self, node):
+        
+        siblings = []
+        parent = self.xpath_based_node_search(self.DOM, node['parent_xpath'])
+        
+        for child in parent['children']:
+            if child['xpath'] != node['xpath']:
+                siblings.append(child)
+            pass
+        
+        return siblings
+        
+        pass
+    
+    
+    
+    def nextNode(self, node, option = "DEPTH"):
+        #...
+        pass
+    
+    
+    
+    def depth_first_next_node(self, node):
+        #...    
+        pass
+    
+    
+    
+ #   def display(self, node, att):
+ #       self.map(node, fun1 = self.__display, args = [att])
+ #       pass
+ #   
+ #   def __display(self, node, args):
+ #       
+ #       print(node[args[0]])
+ #       
+ #       return node
+ #       pass
     
     pass
 
-
-def m(n1, n2):
-    
-    maxi = n1
-    
-    if maxi['bounds']['top'] > n2['bounds']['top']:
-        maxi = n2
-    
-    return maxi
-    
-    pass
 
 
 
@@ -302,10 +339,9 @@ if __name__ == '__main__':
     dr = DOM_Mapper()
 
     dr.retrieve_DOM_tree('../datasets/extracted_data/0000.json')
+    siblings = dr.siblings(dr.DOM['children'][0]['children'][7]['children'][0])
+    print(len(siblings))
     #dr.toDotDict()
-    maxi = dr.reduce(dr.DOM, fun = m)
-    print(maxi['bounds']['top'])
-    #print(type(dr.DOM))
     
     #dr.map(node = dr.DOM, fun1 = p) 
     #dr.map(node = dr.DOM, fun = )
