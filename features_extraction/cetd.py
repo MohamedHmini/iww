@@ -26,13 +26,24 @@ class CETD(DOM_Mapper):
     
     def count_tags(self, node):
         
+        self.map(node, fun1 = self.__init_count_tags, fun3 = self.__count_tags)
+        
+        pass
+    
+    
+    def __init_count_tags(self, node):
+        
         node['tagsCount'] = len(node['children'])
         
-        for child in node['children']:
-            self.count_tags(child)
-            node['tagsCount'] += child['tagsCount']
-            
+        return node
         
+        pass
+    
+    def __count_tags(self, node, child):
+        
+        node['tagsCount'] += child['tagsCount']
+        
+        return node,child
         pass
     
     

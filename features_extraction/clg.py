@@ -2,6 +2,7 @@ import sys
 import os
 import itertools
 import pandas as pd
+from cetd import CETD
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.max_rows', 100)
 
@@ -110,16 +111,19 @@ class CLG(DOM_Mapper):
         pass
     
     
+    def __test_negativity(self, value):
+        return value if value > 0 else 0
+    
     def __init_absolute(self, node):
         
         node['CLG'] = {}
         node['CLG']['absolute'] = {}
-        node['CLG']['absolute']['absolute_top'] = node['bounds']['top']
-        node['CLG']['absolute']['absolute_bottom'] = node['bounds']['bottom'] 
-        node['CLG']['absolute']['absolute_left'] = node['bounds']['left']
-        node['CLG']['absolute']['absolute_right'] = node['bounds']['right']
-        node['CLG']['absolute']['centerX'] = node['bounds']['x']
-        node['CLG']['absolute']['centerY'] = node['bounds']['y']
+        node['CLG']['absolute']['absolute_top'] = self.__test_negativity(node['bounds']['top'])
+        node['CLG']['absolute']['absolute_bottom'] = self.__test_negativity(node['bounds']['bottom'])
+        node['CLG']['absolute']['absolute_left'] = self.__test_negativity(node['bounds']['left'])
+        node['CLG']['absolute']['absolute_right'] = self.__test_negativity(node['bounds']['right'])
+        node['CLG']['absolute']['centerX'] = self.__test_negativity(node['bounds']['x'])
+        node['CLG']['absolute']['centerY'] = self.__test_negativity(node['bounds']['y'])
         
         return node
     
@@ -176,12 +180,12 @@ class CLG(DOM_Mapper):
     def __relative(self, node):
         
         node['CLG']['relative'] = {
-                'relative_top': node['CLG']['absolute']['absolute_top'] / self.DOM['bounds']['height'],
-                'relative_bottom': node['CLG']['absolute']['absolute_bottom'] / self.DOM['bounds']['height'],
-                'relative_left': node['CLG']['absolute']['absolute_left'] / self.DOM['bounds']['width'],
-                'relative_right': node['CLG']['absolute']['absolute_right'] / self.DOM['bounds']['width'],
-                'centerX': node['CLG']['absolute']['centerX'] / self.DOM['CLG']['absolute']['centerX'],
-                'centerY': node['CLG']['absolute']['centerY'] / self.DOM['CLG']['absolute']['centerY']                
+                'relative_top':     node['CLG']['absolute']['absolute_top'] / self.DOM['bounds']['height'],
+                'relative_bottom':  node['CLG']['absolute']['absolute_bottom'] / self.DOM['bounds']['height'],
+                'relative_left':    node['CLG']['absolute']['absolute_left'] / self.DOM['bounds']['width'],
+                'relative_right':   node['CLG']['absolute']['absolute_right'] / self.DOM['bounds']['width'],
+                'centerX':          node['CLG']['absolute']['centerX'] / self.DOM['CLG']['absolute']['centerX'],
+                'centerY':          node['CLG']['absolute']['centerY'] / self.DOM['CLG']['absolute']['centerY']                
         }
         
         return node
@@ -191,10 +195,27 @@ class CLG(DOM_Mapper):
     
     
     
-    def perfect(self):
-                
+    def perfect(self, node):
+        
+        node['CLG']['perfect'] = {
+                'best_top':         self.reduce(node, fun1= lambda x: x['CLG']['relative']['relative_top'],fun2 = self.__perfect)/node['tagsCount'],
+                'best_bottom':      self.reduce(node, fun1= lambda x: x['CLG']['relative']['relative_bottom'],fun2 = self.__perfect)/node['tagsCount'],
+                'best_left':        self.reduce(node, fun1= lambda x: x['CLG']['relative']['relative_left'],fun2 = self.__perfect)/node['tagsCount'],
+                'best_right':       self.reduce(node, fun1= lambda x: x['CLG']['relative']['relative_right'],fun2 = self.__perfect)/node['tagsCount']
+        }
+        
         pass
 
+
+
+
+    def __perfect(self, val, child_val):
+        
+        val += child_val
+        
+        return val
+        
+        pass
     
     
     def adjust(self):
@@ -215,6 +236,9 @@ if __name__ == '__main__':
     #print(arr)
     clg.absolute()
     clg.relative()
-    print(clg.DOM['children'][2]['CLG'])
+    cetd = CETD()
+    cetd.count_tags(clg.DOM)
+    clg.perfect(clg.DOM)
+    print(clg.DOM['CLG'])
     
     pass

@@ -138,27 +138,29 @@ class DOM_Mapper:
     ###################### REDUCER : ##########################
     
     def reduce(self, node = None, 
-            fun = (lambda x,y: x),
+            fun1 = (lambda x: x),
+            fun2 = (lambda x,y : x),
             option = 'DEPTH'):
         
         if option == 'DEPTH':
-            return self.depth_reducer(node, fun)
+            return self.depth_reducer(node, fun1, fun2)
         elif option == 'BREADTH':
-            return self.breadth_reducer(node, fun)
+            return self.breadth_reducer(node, fun1, fun2)
         else:
             print('ERR: option "%(option)s" is not available!' % {'option':option})
         
         pass
     
     
-    def depth_reducer(self, node, fun):
+    def depth_reducer(self, node, fun1, fun2):
         
-        val = node 
+        val = fun1(node)
         
-        for child in node['children']:            
-            self.depth_reducer(child, fun)
-            val = fun(val, child)
-                    
+        for child in node['children']:   
+            child_val = self.depth_reducer(child, fun1, fun2)
+            val = fun2(val, child_val)
+            
+             
         return val
         
         pass
@@ -166,7 +168,7 @@ class DOM_Mapper:
     
     
     
-    def breadth_reducer(self, node, fun):
+    def breadth_reducer(self, node, fun1, fun2):
         # ...
         pass
     
@@ -318,16 +320,46 @@ class DOM_Mapper:
     
     
     
- #   def display(self, node, att):
- #       self.map(node, fun1 = self.__display, args = [att])
- #       pass
- #   
- #   def __display(self, node, args):
- #       
- #       print(node[args[0]])
- #       
- #       return node
- #       pass
+# =============================================================================
+#     def display(self, node, att):
+#         self.map(node, fun1 = self.__display, args = [att])
+#         pass
+#     
+#     def __display(self, node, args):
+#         
+#         print(node[args[0]])
+#         
+#         return node
+#         pass
+# =============================================================================
+ 
+ 
+    def getNegatives(self):
+         
+        self.reduce(self.DOM, self.__getNegatives)
+         
+        pass
+     
+        
+    def __getNegatives(self, val, node):
+        
+        result = []
+        
+        if node['bounds']['right'] < 0:
+            print(node['bounds']['top'])
+            if isinstance(val, dict) == True:
+                
+                result.append(val['bounds']['top'])
+                result.append(node['bounds']['top'])
+                
+            else:
+                
+                val.append(node['bounds']['top'])
+                result = val
+        
+        return result
+        
+        pass
     
     pass
 
@@ -339,8 +371,10 @@ if __name__ == '__main__':
     dr = DOM_Mapper()
 
     dr.retrieve_DOM_tree('../datasets/extracted_data/0000.json')
-    siblings = dr.siblings(dr.DOM['children'][0]['children'][7]['children'][0])
-    print(len(siblings))
+    
+    val = dr.getNegatives()
+    print(val)
+    
     #dr.toDotDict()
     
     #dr.map(node = dr.DOM, fun1 = p) 
