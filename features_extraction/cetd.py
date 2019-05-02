@@ -49,6 +49,12 @@ class CETD(DOM_Mapper):
     
     def text_density(self, node):
         
+        self.map(node, fun1 = self.__text_density)
+        
+        pass
+    
+    def __text_density(self, node):
+        
         tagsCount = (node['tagsCount'] if node['tagsCount'] > 0 else 1)
         charsCount = 0
         try:
@@ -65,12 +71,30 @@ class CETD(DOM_Mapper):
     
     def density_sum(self, node):
           
+        self.map(node, fun1 = self.__init_density_sum, fun3 = self.__density_sum)
+        
+        pass
+    
+    
+    def __init_density_sum(self, node):
+        
         node['densitySum'] = 0
-        for child in node['children']:            
-            self.density_sum(child)
-            node['densitySum'] += child['textDensity']
-            
-        self.max_density_sum =  node['densitySum'] if node['densitySum'] > self.max_density_sum else self.max_density_sum
+        
+        return node
+        
+        pass
+    
+    def __density_sum(self, node, child):
+        
+        node['densitySum'] += child['textDensity']
+        
+        return node,child
+        pass
+    
+    
+    def max_density_sum(self, node):
+        
+        self.max_density_sum = self.reduce(node, fun1 = lambda x : x['densitySum'], fun2 = lambda x,y : x if x > y else y)
         
         pass
     
@@ -161,21 +185,26 @@ class CETD(DOM_Mapper):
     pass
 
 
+
+
 if __name__ == '__main__':
     
     cetd = CETD()
-    cetd.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0000.json'))
-    cetd.count_tags(cetd.DOM)
     
-    cetd.map(node = cetd.DOM, fun1 = cetd.text_density)
-    #cetd.update_DOM_tree()
+    cetd.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0000.json'))
+    
+    cetd.count_tags(cetd.DOM)
+    cetd.text_density(cetd.DOM)
     cetd.density_sum(cetd.DOM)
+    cetd.max_density_sum(cetd.DOM)
+    
     cetd.thresholding()
     cetd.mark_content(cetd.DOM, cetd.threshold)
     
     arr = cetd.toArray(['tagName','xpath','mark'])
     df = pd.DataFrame(arr, columns = ['tagName','xpath','mark'])
     print(df[df['mark'] == "1"].values[0])
+    
     pass
 
 

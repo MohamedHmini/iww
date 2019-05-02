@@ -119,7 +119,8 @@ class DOM_Mapper:
             node, child = fun2(node, child)
             self.depth_mapper(child, fun1, fun2, fun3, fun4)
             node, child = fun3(node, child)
-            
+
+        
         node = fun4(node)
         
         pass
@@ -333,33 +334,33 @@ class DOM_Mapper:
 #         pass
 # =============================================================================
  
- 
-    def getNegatives(self):
-         
-        self.reduce(self.DOM, self.__getNegatives)
-         
-        pass
-     
-        
-    def __getNegatives(self, val, node):
-        
-        result = []
-        
-        if node['bounds']['right'] < 0:
-            print(node['bounds']['top'])
-            if isinstance(val, dict) == True:
+    def xpath_reader(self, xpath):
                 
-                result.append(val['bounds']['top'])
-                result.append(node['bounds']['top'])
-                
-            else:
-                
-                val.append(node['bounds']['top'])
-                result = val
+        xpath_splited = xpath.split("/")
+        node = xpath_splited[-1]
         
-        return result
+        if node == "BODY":
+            node = {
+                'node':node,
+                'tagName': node,
+                'tagIndex': 0,
+                'parent_xpath': ""
+            } 
+            
+        else:
+        
+            node = {
+                    'node':node,
+                    'tagName': node.split("[")[0],
+                    'tagIndex': int(node.split("[")[-1].split("]")[0]),
+                    'parent_xpath': str.join("/",xpath_splited[:-1])
+            }
+        
+        return node
         
         pass
+    
+    
     
     pass
 
@@ -372,8 +373,7 @@ if __name__ == '__main__':
 
     dr.retrieve_DOM_tree('../datasets/extracted_data/0000.json')
     
-    val = dr.getNegatives()
-    print(val)
+    dr.map(dr.DOM, fun1 = lambda x: x if print(x['xpath']) else x)
     
     #dr.toDotDict()
     
