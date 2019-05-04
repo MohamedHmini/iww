@@ -171,6 +171,16 @@ class CETD(DOM_Mapper):
         pass
     
     
+    def toning_marks(self, node):
+        
+        
+        pass
+    
+    
+    def __toning_marks(self, node):
+        
+        pass
+    
     
     def visual_importance(self, node):
         #...
@@ -189,10 +199,11 @@ class CETD(DOM_Mapper):
 
 if __name__ == '__main__':
     
+# =============================================================================
     cetd = CETD()
-    
-    cetd.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0000.json'))
-    
+     
+    cetd.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0001.json'))
+     
     cetd.count_tags(cetd.DOM)
     cetd.text_density(cetd.DOM)
     cetd.density_sum(cetd.DOM)
@@ -200,10 +211,13 @@ if __name__ == '__main__':
     
     cetd.thresholding()
     cetd.mark_content(cetd.DOM, cetd.threshold)
-    
+    cetd.update_DOM_tree()
+     
     arr = cetd.toArray(['tagName','xpath','mark'])
     df = pd.DataFrame(arr, columns = ['tagName','xpath','mark'])
-    print(df[df['mark'] == "1"].values[0])
+    print(df[df['mark'] == "1"])
+# =============================================================================
+    
     
     pass
 

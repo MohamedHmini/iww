@@ -6,7 +6,8 @@ const util = require('util')
 
 commander
   .version('0.1.0')
-  .option('-f, --file [file]', 'The webpage generated JSON file location')
+  .option('-i, --inputFile [inputFile]', 'The webpage generated JSON file location')
+  .option('-o, --outputFile [outputFile]', '')
   .parse(process.argv);
 
 
@@ -18,6 +19,8 @@ var getJsonizedDOM = (file) => {
   let DOM = webpage.DOM
   let meta_data = webpage.meta_data
   let webpage_url = webpage.webpage_url
+
+    console.log(webpage_url)
 
   return {
     'DOM':DOM,
@@ -35,7 +38,7 @@ var getJsonizedDOM = (file) => {
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
 
-        var webpage_json = await getJsonizedDOM(commander.file)        
+        var webpage_json = await getJsonizedDOM(commander.inputFile)        
 
         await page.goto(webpage_json.webpage_url);
         
@@ -100,7 +103,7 @@ var getJsonizedDOM = (file) => {
             var xpath_details = ''
             var DOM_node = NaN
 
-            if(node.mark == "16"){
+            if(node.mark == "1"){
               counter++
               xpath_details = xpath_detacher(node.real_xpath)
               xpath_details.pop()
@@ -127,7 +130,7 @@ var getJsonizedDOM = (file) => {
 
         console.log(counter)
         await page.screenshot({
-          path:`test.png`
+          path:commander.outputFile
         });
 
 
