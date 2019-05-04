@@ -23,11 +23,12 @@ def get_urls(urls_path, edge):
 
 
 
-def CMD(url, destination):
+def CMD(script, url, file):
     
-    cmd = 'node resources_extractor.js -s "%(url)s" -f "%(destination)s"' % {
+    cmd = 'node "%(script)s" -s "%(url)s" -f "%(file)s"' % {
+                'script': script,
                 'url': url,
-                'destination': destination,
+                'file': file,
             }
             
             
@@ -51,7 +52,7 @@ def feed_extractor(urls_path, destination_directory, edge):
         
         if os.path.exists(destination) == False:
         
-            CMD(url, destination)
+            CMD('resources_extractor.js', url, destination)
             
             pass
         

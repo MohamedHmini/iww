@@ -44,7 +44,8 @@ class DOM_Mapper:
         file = open(self.DOM_file_path, 'r', encoding = 'UTF-8')
         page_data = json.load(file)
         self.DOM = page_data['DOM']
-        self.meta_data = DotDict(page_data['meta_data'])
+        self.meta_data = page_data['meta_data']
+        self.webpage_url = page_data['webpage_url']
         
         file.close()
         
@@ -57,7 +58,8 @@ class DOM_Mapper:
         
         DOM_str = json.dumps({
                 'DOM':self.DOM,
-                'meta_data':self.meta_data
+                'meta_data':self.meta_data,
+                'webpage_url':self.webpage_url
                 })
         
         file.write(DOM_str)
@@ -364,6 +366,14 @@ class DOM_Mapper:
     
     pass
 
+isin = 0
+notin = 0
+
+def display(node):
+    print(type(node['mark']))
+        
+    return node
+
 
 
 
@@ -372,8 +382,10 @@ if __name__ == '__main__':
     dr = DOM_Mapper()
 
     dr.retrieve_DOM_tree('../datasets/extracted_data/0000.json')
-    
-    dr.map(dr.DOM, fun1 = lambda x: x if print(x['xpath']) else x)
+    dr.map(dr.DOM, fun1= display)
+    #df = pd.DataFrame(dr.toArray(['tagName','mark']))
+    #print(df)
+    #dr.map(dr.DOM, fun1 = lambda x: x if print(x['xpath']) else x)
     
     #dr.toDotDict()
     

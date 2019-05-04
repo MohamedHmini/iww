@@ -99,7 +99,7 @@ commander
                 }
 
                 
-                var traverse_DOM_tree = (node, xpath = "",index = "")=>{
+                var traverse_DOM_tree = (node, xpath = "",index = "", real_xpath = "", real_index = "")=>{
 
                         var childs = node.childNodes;
                         var num_of_childs = childs.length;
@@ -117,17 +117,31 @@ commander
                                 "dimensions":dimensions,
                                 "bounds":node.getBoundingClientRect().toJSON(),
                                 "xpath":xpath+"/"+node.tagName+index,
-                                "parent_xpath":xpath
+                                "parent_xpath":xpath,
+                                "real_xpath":real_xpath+"/"+node.tagName+real_index,
                         }
 
                         var counter = 0
+                        var real_counter = 0
+
                         childs.forEach(child=>{
                                 // consider NOSCRIPT & BR!
-                                if(child.nodeType == 1 && child.tagName != "SCRIPT" && child.tagName != "STYLE"){
-                                        var doc_child = traverse_DOM_tree(child,doc.xpath,"["+counter+"]")
+                                if(child.nodeType == 1 && child.tagName != "SCRIPT" && child.tagName != "STYLE" && child.tagName != "NOSCRIPT"){
+                                        
+                                        var doc_child = traverse_DOM_tree(
+                                                node = child,
+                                                xpath = doc.xpath,
+                                                index = "["+counter+"]", 
+                                                real_xpath = doc.real_xpath, 
+                                                real_index = "["+real_counter+"]"
+                                        )                                        
+                                        
+                                        
                                         doc.children.push(doc_child)
                                         counter++
                                 }
+
+                                real_counter++
                         })
                         
                 
@@ -207,7 +221,8 @@ commander
 
         var document = {
 		"DOM":traversed_DOM_tree,
-                "meta_data":meta_data
+                "meta_data":meta_data,
+                "webpage_url":commander.site
         }
 
         fs.writeFile(commander.filedirectory,JSON.stringify(document),(err)=>{})
