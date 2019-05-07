@@ -11,9 +11,6 @@ import matplotlib.pyplot as plt
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.max_rows', 100)
 
-sys.path.append(os.path.realpath(os.path.abspath('../utilities')))
-
-
 from dom_mapper import DOM_Mapper
 
 

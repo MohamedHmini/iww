@@ -231,7 +231,7 @@ class CLG(DOM_Mapper):
 if __name__ == '__main__':
     
     clg = CLG()
-    clg.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0000.json'))
+    clg.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0001.json'))
     #arr = clg.toArray(features = ['tagName','xpath'])
     #print(arr)
     clg.absolute()

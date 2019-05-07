@@ -26,7 +26,7 @@ class DOM_Mapper:
     
     
     DOM = {}
-    meta_data = DotDict({})    
+    meta_data = {} 
     DOM_arr = np.array([])
     
     
@@ -189,23 +189,25 @@ class DOM_Mapper:
         pass
     
     
-    def toArray(self, features):
+    def flatten(self, node, features):
         
         self.DOM_arr_features = features
-        self.map(node = self.DOM, fun1 = self.__toArray)
+        self.DOM_arr = np.array([])
+        self.map(node = node, fun1 = self.__flatten)
         
         return self.DOM_arr
         
         pass
     
     
-    def __toArray(self, node):
+    def __flatten(self, node):
         
         features_values = []
         
         for feature in self.DOM_arr_features:
             
-            features_values.append(node[feature])
+            feature_val = self.get_feature_by_path(node, feature)
+            features_values.append(feature_val)
             
             pass
         
@@ -217,6 +219,27 @@ class DOM_Mapper:
             self.DOM_arr = np.concatenate((self.DOM_arr,arr), axis = 0)
         
         return node
+        
+        pass
+    
+    
+    def get_feature_by_path(self, node, feature_path):
+        
+        try:
+            feature_seq = feature_path.split(".")
+            feature_val = node.copy()
+            
+            for feature in feature_seq:
+                
+                feature_val = feature_val[feature]
+                
+                pass
+        except:
+            return np.nan
+            pass
+        
+        
+        return feature_val        
         
         pass
     
@@ -382,7 +405,8 @@ if __name__ == '__main__':
     dr = DOM_Mapper()
 
     dr.retrieve_DOM_tree('../datasets/extracted_data/0000.json')
-    dr.map(dr.DOM, fun1= display)
+    
+    
     #df = pd.DataFrame(dr.toArray(['tagName','mark']))
     #print(df)
     #dr.map(dr.DOM, fun1 = lambda x: x if print(x['xpath']) else x)

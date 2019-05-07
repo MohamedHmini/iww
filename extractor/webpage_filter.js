@@ -42,7 +42,7 @@ var getJsonizedDOM = (file) => {
 
         await page.goto(webpage_json.webpage_url);
         
-        await page.setViewport({ width: 1600, height: 10000});
+        await page.setViewport({ width: 1600, height: 15000});
         
 
         var counter = await page.evaluate((webpage_json)=>{
@@ -103,12 +103,15 @@ var getJsonizedDOM = (file) => {
             var xpath_details = ''
             var DOM_node = NaN
 
-            if(node.mark == "1"){
+            if(node.mark == "0"){
               counter++
               xpath_details = xpath_detacher(node.real_xpath)
               xpath_details.pop()
-              DOM_node = search_node(document.body, xpath_details)
-              DOM_node.style.border = "4px solid red"
+		try{              
+	      DOM_node = search_node(document.body, xpath_details)
+              
+	      DOM_node.style.border = "4px solid red"
+		}catch(e){}
             }
 
             node.children.forEach(child=>{
@@ -128,7 +131,7 @@ var getJsonizedDOM = (file) => {
           
         }, webpage_json)
 
-        console.log(counter)
+        console.log("NUMBER OF SELECTED NODES : " + counter)
         await page.screenshot({
           path:commander.outputFile
         });

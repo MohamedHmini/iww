@@ -17,11 +17,19 @@ commander
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
         await page.goto(commander.site);
-        
+
         await page.setViewport({ width: 1600, height: 4000});
-        
+
         const traversed_DOM_tree = await page.evaluate(()=>{
-        
+		
+		var clean_style_properties = (styles) =>{
+
+			styles['font-size'] = Number(styles['font-size'].split("px")[0])	
+
+
+			return styles
+		}
+
 
                 var set_dimensions = (node)=>{
                         var dimensions = {}
@@ -79,7 +87,7 @@ commander
 
                 var setComputedSyles = (node)=>{
 
-                        var computed_styles = [];
+                        var computed_styles = {};
                         var acquired_computed_styles = document.defaultView.getComputedStyle(node);
                         var len = acquired_computed_styles.length;
 
@@ -88,11 +96,7 @@ commander
                                 var name = acquired_computed_styles.item(i);
                                 var value = acquired_computed_styles.getPropertyValue(name);
 
-
-                                computed_styles.push({
-                                        "name":name,
-                                        "value":value
-                                })
+                                computed_styles[name] = value
                         } 
 
                         return computed_styles;
@@ -106,7 +110,7 @@ commander
                         var atts = setAtts(node);
                         var dimensions = set_dimensions(node)
                         var computed_styles = setComputedSyles(node);                        
-                        
+                        computed_styles = clean_style_properties(computed_styles)
                         
                         var doc = {
                                 "tagName":node.tagName,

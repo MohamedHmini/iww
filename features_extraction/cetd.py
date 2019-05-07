@@ -202,7 +202,7 @@ if __name__ == '__main__':
 # =============================================================================
     cetd = CETD()
      
-    cetd.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0001.json'))
+    cetd.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0003.json'))
      
     cetd.count_tags(cetd.DOM)
     cetd.text_density(cetd.DOM)
