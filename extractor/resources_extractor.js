@@ -1,8 +1,7 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const commander = require('commander');
-
-
+const rgb2hex = require('rgb-hex')
 
 commander
   .version('0.1.0')
@@ -14,21 +13,24 @@ commander
 
 (async() => {
 
+        
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
         await page.goto(commander.site);
 
+
         await page.setViewport({ width: 1600, height: 4000});
 
-        const traversed_DOM_tree = await page.evaluate(()=>{
-		
-		var clean_style_properties = (styles) =>{
+        const traversed_DOM_tree = await page.evaluate((rgb2hex)=>{
 
-			styles['font-size'] = Number(styles['font-size'].split("px")[0])	
-
-
-			return styles
-		}
+        		var clean_style_properties = (styles) =>{
+        
+        			styles['font-size'] = Number(styles['font-size'].split("px")[0])	
+        			//styles['color'] = rgb2hex(styles['color'])
+        			//styles['background-color'] = rgb2hex(styles['background-color'])
+        
+        			return styles
+        		}
 
 
                 var set_dimensions = (node)=>{
@@ -155,7 +157,7 @@ commander
                 return traverse_DOM_tree(document.body)
                 
                 
-        })
+        }, rgb2hex);
 
 
         var meta_data = await page.evaluate(()=>{

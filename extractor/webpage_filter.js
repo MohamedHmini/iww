@@ -42,7 +42,7 @@ var getJsonizedDOM = (file) => {
 
         await page.goto(webpage_json.webpage_url);
         
-        await page.setViewport({ width: 1600, height: 15000});
+        await page.setViewport({ width: 1600, height: 20000});
         
 
         var counter = await page.evaluate((webpage_json)=>{
@@ -103,7 +103,7 @@ var getJsonizedDOM = (file) => {
             var xpath_details = ''
             var DOM_node = NaN
 
-            if(node.mark == "0"){
+            if(node.mark == "1"){
               counter++
               xpath_details = xpath_detacher(node.real_xpath)
               xpath_details.pop()

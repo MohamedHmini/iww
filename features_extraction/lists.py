@@ -8,7 +8,9 @@ from sklearn.manifold import TSNE
 from sklearn.cluster import DBSCAN
 from sklearn.cluster import KMeans
 from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.metrics.pairwise import euclidean_distances
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.max_rows', 100)
 
@@ -51,14 +53,6 @@ class Lists(DOM_Mapper):
 #         pass
 # =============================================================================
     
-    
-    def vectorize(self, node):
-        
-        arr = self.toArray(['LISTS'])
-        mapped = list(map(lambda x : list(x[0]['adjust'].values()), arr))
-        return np.array()
-        
-        pass
     
     def original(self):
         
@@ -107,7 +101,36 @@ class Lists(DOM_Mapper):
         
         node['LISTS']['absolute']['font-size'] = node['style']['font-size']
         
+        node['LISTS']['absolute']['font-family'] = {}
+        node['LISTS']['absolute']['font-family'][node['style']['font-family'].lower()] = 1
+        
+        node['LISTS']['absolute']['color'] = {}
+        node['LISTS']['absolute']['color'][node['style']['color']] = 1
+        
+        node['LISTS']['absolute']['background-color'] = {}
+        node['LISTS']['absolute']['background-color'][node['style']['background-color']] = 1
+        
+        node['LISTS']['absolute']['classes'] = { c: 1 for c in node['atts']['class'] } if 'class' in node['atts'].keys() else {}
+        
+        
+        
         return node
+        
+        pass
+    
+    
+    def mergeDicts(self, parent, child):
+        
+        parent = dict([
+                (pi, pv+child[pi]) if pi in child.keys() else (pi, pv)
+                for pi, pv in parent.items()                
+        ])
+        
+        cv = child.copy()
+        cv.update(parent)
+        parent = cv
+        
+        return parent
         
         pass
     
@@ -126,6 +149,16 @@ class Lists(DOM_Mapper):
         
         
         parent['LISTS']['absolute']['font-size'] += child['LISTS']['absolute']['font-size']
+        parent['LISTS']['absolute']['font-family'].update(child['LISTS']['absolute']['font-family'])
+        parent['LISTS']['absolute']['background-color'].update(child['LISTS']['absolute']['background-color'])
+        parent['LISTS']['absolute']['color'].update(child['LISTS']['absolute']['color'])
+#        parent['LISTS']['absolute']['classes'].update(child['LISTS']['absolute']['classes'])
+
+        
+        parent['LISTS']['absolute']['classes'] = self.mergeDicts(
+                parent['LISTS']['absolute']['classes'], 
+                child['LISTS']['absolute']['classes']
+                )
         
         
         return parent, child
@@ -146,6 +179,10 @@ class Lists(DOM_Mapper):
 #         node['LISTS']['absolute']['x'] /= (len(node['children']) + 1)
 #         node['LISTS']['absolute']['y'] /= (len(node['children']) + 1)
 # =============================================================================
+        node['LISTS']['absolute']['font-family-count'] = len(node['LISTS']['absolute']['font-family'])
+        node['LISTS']['absolute']['background-color-count'] = len(node['LISTS']['absolute']['background-color'])
+        node['LISTS']['absolute']['color-count'] = len(node['LISTS']['absolute']['color'])
+
         
         return node
         
@@ -163,25 +200,39 @@ class Lists(DOM_Mapper):
         pass
     
     
+    def child_parent_ratio(self, child, parent):
+        
+        return child / parent if  parent != 0 else 0
+    
+        pass
+    
+    
     
     def __relative(self, parent, child):
         
         child['LISTS']['relative'] = {}
-        child['LISTS']['relative']['width'] = child['LISTS']['absolute']['width'] / parent['LISTS']['absolute']['width'] if  parent['LISTS']['absolute']['width'] != 0 else 1
-        child['LISTS']['relative']['height'] = child['LISTS']['absolute']['height'] / parent['LISTS']['absolute']['height'] if  parent['LISTS']['absolute']['height'] != 0 else 1
-        child['LISTS']['relative']['area'] = child['LISTS']['absolute']['area'] / parent['LISTS']['absolute']['area'] if  parent['LISTS']['absolute']['area'] != 0 else 1
-#        child['LISTS']['relative']['top'] = child['LISTS']['absolute']['top'] / parent['LISTS']['absolute']['top'] if  parent['LISTS']['absolute']['top'] != 0 else 1
-#        child['LISTS']['relative']['bottom'] = child['LISTS']['absolute']['bottom'] / parent['LISTS']['absolute']['bottom'] if  parent['LISTS']['absolute']['bottom'] != 0 else 1
-#        child['LISTS']['relative']['left'] = child['LISTS']['absolute']['left'] / parent['LISTS']['absolute']['left'] if  parent['LISTS']['absolute']['left'] != 0 else 1
-#        child['LISTS']['relative']['right'] = child['LISTS']['absolute']['right'] / parent['LISTS']['absolute']['right'] if  parent['LISTS']['absolute']['right'] != 0 else 1
-#        child['LISTS']['relative']['x'] = child['LISTS']['absolute']['x'] / parent['LISTS']['absolute']['x'] if  parent['LISTS']['absolute']['x'] != 0 else 1
-#        child['LISTS']['relative']['y'] = child['LISTS']['absolute']['y'] / parent['LISTS']['absolute']['y'] if  parent['LISTS']['absolute']['y'] != 0 else 1
-#        child['LISTS']['relative']['centerX'] = child['LISTS']['absolute']['centerX'] / parent['LISTS']['absolute']['centerX'] if  parent['LISTS']['absolute']['centerX'] != 0 else 1
-#        child['LISTS']['relative']['centerY'] = child['LISTS']['absolute']['centerY'] / parent['LISTS']['absolute']['centerY'] if  parent['LISTS']['absolute']['centerY'] != 0 else 1
+        child['LISTS']['relative']['width'] = self.child_parent_ratio(child['LISTS']['absolute']['width'],  parent['LISTS']['absolute']['width'])
+        child['LISTS']['relative']['height'] = child['LISTS']['absolute']['height'] / parent['LISTS']['absolute']['height'] if  parent['LISTS']['absolute']['height'] != 0 else 0
+        child['LISTS']['relative']['area'] = child['LISTS']['absolute']['area'] / parent['LISTS']['absolute']['area'] if  parent['LISTS']['absolute']['area'] != 0 else 0
+#        child['LISTS']['relative']['top'] = child['LISTS']['absolute']['top'] / parent['LISTS']['absolute']['top'] if  parent['LISTS']['absolute']['top'] != 0 else 0
+#        child['LISTS']['relative']['bottom'] = child['LISTS']['absolute']['bottom'] / parent['LISTS']['absolute']['bottom'] if  parent['LISTS']['absolute']['bottom'] != 0 else 0
+#        child['LISTS']['relative']['left'] = child['LISTS']['absolute']['left'] / parent['LISTS']['absolute']['left'] if  parent['LISTS']['absolute']['left'] != 0 else 0
+#        child['LISTS']['relative']['right'] = child['LISTS']['absolute']['right'] / parent['LISTS']['absolute']['right'] if  parent['LISTS']['absolute']['right'] != 0 else 0
+#        child['LISTS']['relative']['x'] = child['LISTS']['absolute']['x'] / parent['LISTS']['absolute']['x'] if  parent['LISTS']['absolute']['x'] != 0 else 0
+#        child['LISTS']['relative']['y'] = child['LISTS']['absolute']['y'] / parent['LISTS']['absolute']['y'] if  parent['LISTS']['absolute']['y'] != 0 else 0
+#        child['LISTS']['relative']['centerX'] = child['LISTS']['absolute']['centerX'] / parent['LISTS']['absolute']['centerX'] if  parent['LISTS']['absolute']['centerX'] != 0 else 0
+#        child['LISTS']['relative']['centerY'] = child['LISTS']['absolute']['centerY'] / parent['LISTS']['absolute']['centerY'] if  parent['LISTS']['absolute']['centerY'] != 0 else 0
         
-        child['LISTS']['relative']['font-size'] = child['LISTS']['absolute']['font-size'] / parent['LISTS']['absolute']['font-size'] if  parent['LISTS']['absolute']['font-size'] != 0 else 1
+        child['LISTS']['relative']['font-size'] = child['LISTS']['absolute']['font-size'] / parent['LISTS']['absolute']['font-size'] if  parent['LISTS']['absolute']['font-size'] != 0 else 0
+        child['LISTS']['relative']['background-color-count'] = self.child_parent_ratio(child['LISTS']['absolute']['background-color-count'], parent['LISTS']['absolute']['background-color-count'])
+        child['LISTS']['relative']['color-count'] = self.child_parent_ratio(child['LISTS']['absolute']['color-count'], parent['LISTS']['absolute']['color-count'])
+        child['LISTS']['relative']['font-family-count'] = self.child_parent_ratio(child['LISTS']['absolute']['font-family-count'], parent['LISTS']['absolute']['font-family-count'])
 
-        child['LISTS']['relative']['tagsCount'] = child['tagsCount'] / parent['tagsCount'] if  parent['tagsCount'] != 0 else 1
+
+        child['LISTS']['relative']['tagsCount'] = child['tagsCount'] / parent['tagsCount'] if  parent['tagsCount'] != 0 else 0
+#        child['LISTS']['relative']['densitySum'] = child['densitySum'] / parent['densitySum'] if  parent['densitySum'] != 0 else 0
+        
+
         
         return parent, child
     
@@ -200,6 +251,12 @@ class Lists(DOM_Mapper):
         
         pass
     
+    def isListTag(self, tagname):
+        
+        return True if tagname == 'UL' or tagname == 'TR' else False
+        
+        pass
+    
     
     def __init_adjust(self, node):
         
@@ -212,8 +269,19 @@ class Lists(DOM_Mapper):
         node['LISTS']['adjust']['height'] = []
         node['LISTS']['adjust']['area'] = []
         node['LISTS']['adjust']['font-size'] = []
+        node['LISTS']['adjust']['background-color-count'] = []
+        node['LISTS']['adjust']['color-count'] = []
+        node['LISTS']['adjust']['font-family-count'] = []
+        node['LISTS']['adjust']['font-size'] = []
         node['LISTS']['adjust']['tagsCount'] = []
-            
+#        node['LISTS']['adjust']['densitySum'] = []
+        
+        
+        
+        
+        node['LISTS']['adjust']['multi-tag-subtree'] = 1 if len(node['children']) >= 2 else 0
+        node['LISTS']['adjust']['standard-list-tag'] = 1 if self.isListTag(node['tagName']) else 0
+        
         return node
         
         pass
@@ -226,7 +294,12 @@ class Lists(DOM_Mapper):
         parent['LISTS']['adjust']['height'].append(child['LISTS']['relative']['height'])
         parent['LISTS']['adjust']['area'].append(child['LISTS']['relative']['area'])
         parent['LISTS']['adjust']['font-size'].append(child['LISTS']['relative']['font-size'])
+        parent['LISTS']['adjust']['font-family-count'].append(child['LISTS']['relative']['font-family-count'])
+        parent['LISTS']['adjust']['background-color-count'].append(child['LISTS']['relative']['background-color-count'])
+        parent['LISTS']['adjust']['color-count'].append(child['LISTS']['relative']['color-count'])
         parent['LISTS']['adjust']['tagsCount'].append(child['LISTS']['relative']['tagsCount'])
+#        parent['LISTS']['adjust']['densitySum'].append(child['LISTS']['relative']['densitySum'])
+
         
         return parent, child
         
@@ -236,18 +309,28 @@ class Lists(DOM_Mapper):
     def __end_adjust(self, node):
         
         if node['LISTS']['adjust']['expected_vect'].shape[0] != 0:
-            node['LISTS']['adjust']['width'] = cosine_similarity([node['LISTS']['adjust']['width']], [node['LISTS']['adjust']['expected_vect']])[0][0]
-            node['LISTS']['adjust']['height'] = cosine_similarity([node['LISTS']['adjust']['height']], [node['LISTS']['adjust']['expected_vect']])[0][0]
-            node['LISTS']['adjust']['area'] = cosine_similarity([node['LISTS']['adjust']['area']], [node['LISTS']['adjust']['expected_vect']])[0][0]
-            node['LISTS']['adjust']['font-size'] = cosine_similarity([node['LISTS']['adjust']['font-size']], [node['LISTS']['adjust']['expected_vect']])[0][0]
-            node['LISTS']['adjust']['tagsCount'] = cosine_similarity([node['LISTS']['adjust']['tagsCount']], [node['LISTS']['adjust']['expected_vect']])[0][0]
+            node['LISTS']['adjust']['width'] = 1- euclidean_distances([node['LISTS']['adjust']['width']], [node['LISTS']['adjust']['expected_vect']])[0][0]
+            node['LISTS']['adjust']['height'] = 1- euclidean_distances([node['LISTS']['adjust']['height']], [node['LISTS']['adjust']['expected_vect']])[0][0]
+            node['LISTS']['adjust']['area'] = 1- euclidean_distances([node['LISTS']['adjust']['area']], [node['LISTS']['adjust']['expected_vect']])[0][0]
+            node['LISTS']['adjust']['font-size'] = 1- euclidean_distances([node['LISTS']['adjust']['font-size']], [node['LISTS']['adjust']['expected_vect']])[0][0]
+            node['LISTS']['adjust']['font-family-count'] = 1- euclidean_distances([node['LISTS']['adjust']['font-family-count']], [node['LISTS']['adjust']['expected_vect']])[0][0]
+            node['LISTS']['adjust']['background-color-count'] = 1- euclidean_distances([node['LISTS']['adjust']['background-color-count']], [node['LISTS']['adjust']['expected_vect']])[0][0]
+            node['LISTS']['adjust']['color-count'] = 1- euclidean_distances([node['LISTS']['adjust']['color-count']], [node['LISTS']['adjust']['expected_vect']])[0][0]
+            node['LISTS']['adjust']['tagsCount'] = 1- euclidean_distances([node['LISTS']['adjust']['tagsCount']], [node['LISTS']['adjust']['expected_vect']])[0][0]
+#            node['LISTS']['adjust']['densitySum'] = cosine_similarity([node['LISTS']['adjust']['densitySum']], [node['LISTS']['adjust']['expected_vect']])[0][0]
+
         else:
             
             node['LISTS']['adjust']['width'] = 0
             node['LISTS']['adjust']['height'] = 0
             node['LISTS']['adjust']['area'] = 0
             node['LISTS']['adjust']['font-size'] = 0
+            node['LISTS']['adjust']['font-family-count'] = 0
+            node['LISTS']['adjust']['background-color-count'] = 0
+            node['LISTS']['adjust']['color-count'] = 0
             node['LISTS']['adjust']['tagsCount'] = 0
+#            node['LISTS']['adjust']['densitySum'] = 0
+
             
             pass
             
@@ -280,7 +363,7 @@ class Lists(DOM_Mapper):
     
     def __remove(self, node):
         
-        if len(node['children']) < 5:
+        if len(node['children']) < 4:
             node['mark'] = "-1"
         
         return node
@@ -293,22 +376,37 @@ class Lists(DOM_Mapper):
 
 
 
+
 if __name__ == '__main__':
     
-    lists = Lists()
+#    lists = Lists()
 #    cetd = CETD()
-    lists.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0000.json'))
+#    lists.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0000.json'))
+#
 #    cetd.count_tags(lists.DOM)
+#    cetd.text_density(lists.DOM)
+#    cetd.density_sum(lists.DOM)
 #    lists.absolute(lists.DOM)
 #    lists.relative(lists.DOM)
 #    lists.adjust(lists.DOM)
-#    features = ['xpath','LISTS.adjust.width', 'LISTS.adjust.height', 'LISTS.adjust.area', 'LISTS.adjust.font-size', 'LISTS.adjust.tagsCount']
+#    features = [
+#            'xpath','LISTS.adjust.width', 'LISTS.adjust.height', 'LISTS.adjust.area', 
+#            'LISTS.adjust.font-size', 'LISTS.adjust.font-family-count', 'LISTS.adjust.background-color-count', 
+#            'LISTS.adjust.color-count','LISTS.adjust.tagsCount', 
+#            'LISTS.adjust.multi-tag-subtree', 'LISTS.adjust.standard-list-tag']
+#    features = ['xpath','LISTS.adjust.width', 'LISTS.adjust.height', 'LISTS.adjust.area',
+#                'LISTS.adjust.tagsCount', 'LISTS.adjust.multi-tag-subtree']
+##    
 #    arr = lists.flatten(lists.DOM, features = features)
-#    arr = np.array(arr)
 #    xpaths = arr[:,0]
 #    X= arr[:,1:]
-    
-    
+#    
+#    print(X)
+
+#    print(lists.DOM['children'][0]['textDensity'])
+#    print(lists.DOM['children'][0]['textDensity'])
+#    print(lists.DOM['children'][1]['textDensity'])
+
 #    lists.DOM['LISTS']['relative'] = {}
 #    vect = lists.vectorize(node = lists.DOM)
 #    print(vect.shape)
@@ -316,14 +414,19 @@ if __name__ == '__main__':
 #    tsne = TSNE(n_components=2).fit_transform(X)
 #    km = KMeans(n_clusters = 2)
 #    results = km.fit(X)
-#    
+    
+#    fig = plt.figure()
+#    ax = fig.add_subplot(111, projection='3d')  
+    
 #    plt.scatter(tsne[:,0], tsne[:,1], c = results.labels_)
 #    lists.markAll(xpaths, results.labels_)
     
     # heuristic based method :
     lists.remove(lists.DOM)
-    
-    
+#    
+#    
     lists.update_DOM_tree()
+#    df = pd.DataFrame(X, columns = features[1:])
+#    print(df['LISTS.adjust.color-count'])
     
     pass
