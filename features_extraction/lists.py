@@ -14,8 +14,13 @@ from mpl_toolkits.mplot3d import Axes3D
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.max_rows', 100)
 
-from dom_mapper import DOM_Mapper
 
+
+sys.path.append(os.path.realpath(os.path.abspath('../utilities')))
+
+
+from dom_mapper import DOM_Mapper
+import pairwise as pw
 
 
 
@@ -110,7 +115,7 @@ class Lists(DOM_Mapper):
         node['LISTS']['absolute']['background-color'] = {}
         node['LISTS']['absolute']['background-color'][node['style']['background-color']] = 1
         
-        node['LISTS']['absolute']['classes'] = { c: 1 for c in node['atts']['class'] } if 'class' in node['atts'].keys() else {}
+        node['LISTS']['absolute']['bag-of-classes'] = { c: 1 for c in node['atts']['class'] } if 'class' in node['atts'].keys() else {}
         
         
         
@@ -155,9 +160,9 @@ class Lists(DOM_Mapper):
 #        parent['LISTS']['absolute']['classes'].update(child['LISTS']['absolute']['classes'])
 
         
-        parent['LISTS']['absolute']['classes'] = self.mergeDicts(
-                parent['LISTS']['absolute']['classes'], 
-                child['LISTS']['absolute']['classes']
+        parent['LISTS']['absolute']['bag-of-classes'] = self.mergeDicts(
+                parent['LISTS']['absolute']['bag-of-classes'], 
+                child['LISTS']['absolute']['bag-of-classes']
                 )
         
         
@@ -188,22 +193,41 @@ class Lists(DOM_Mapper):
         
         pass
     
+       
     
     
     def relative(self, node):
         
         self.map(
                 self.DOM,
+                fun1 = self.__init_relative,
                 fun2 = self.__relative
                  )
         
         pass
     
     
+    def __init_relative(self, node):
+        
+        
+        return node
+        pass
+    
+    
+    
     def child_parent_ratio(self, child, parent):
         
         return child / parent if  parent != 0 else 0
     
+        pass
+    
+    
+    def create_bag_of_classes_ratios_list(self, child, parent):
+        
+        ratios = [ child[pi]/pv if (pi in child.keys()) == True else 0 for pi,pv in parent.items()]
+        
+        return ratios
+        
         pass
     
     
@@ -232,6 +256,11 @@ class Lists(DOM_Mapper):
         child['LISTS']['relative']['tagsCount'] = child['tagsCount'] / parent['tagsCount'] if  parent['tagsCount'] != 0 else 0
 #        child['LISTS']['relative']['densitySum'] = child['densitySum'] / parent['densitySum'] if  parent['densitySum'] != 0 else 0
         
+
+        child['LISTS']['relative']['bag-of-classes'] = self.create_bag_of_classes_ratios_list(
+                child['LISTS']['absolute']['bag-of-classes'],
+                parent['LISTS']['absolute']['bag-of-classes']
+                )
 
         
         return parent, child
@@ -263,8 +292,24 @@ class Lists(DOM_Mapper):
         nbr_children = len(node['children'])
         expected_vect = np.full(nbr_children, float(1/float(nbr_children)) if nbr_children !=0 else 0)
         
+        nbr_classes = len(node['LISTS']['absolute']['bag-of-classes'])
+        classes_expected_vect = np.full(nbr_classes, float(1/float(nbr_children)) if nbr_children !=0 else 0)
+
+        
+        classes_coherence = pw.vectors_coherence(
+                classes_expected_vect,
+                [
+                        child['LISTS']['relative']['bag-of-classes'] 
+                        for child in node['children']
+                ]
+                )
+        
+        
         node['LISTS']['adjust'] = {}
         node['LISTS']['adjust']['expected_vect'] = expected_vect
+        node['LISTS']['adjust']['classes-expected-vect'] = classes_expected_vect
+        node['LISTS']['adjust']['bag-of-classes'] = []
+        node['LISTS']['adjust']['bag-of-classes-coherence'] = classes_coherence
         node['LISTS']['adjust']['width'] = []
         node['LISTS']['adjust']['height'] = []
         node['LISTS']['adjust']['area'] = []
@@ -299,7 +344,20 @@ class Lists(DOM_Mapper):
         parent['LISTS']['adjust']['color-count'].append(child['LISTS']['relative']['color-count'])
         parent['LISTS']['adjust']['tagsCount'].append(child['LISTS']['relative']['tagsCount'])
 #        parent['LISTS']['adjust']['densitySum'].append(child['LISTS']['relative']['densitySum'])
-
+        
+        classes_sim = 1
+        
+        try:
+        
+            classes_sim = cosine_similarity(
+                    [child['LISTS']['relative']['bag-of-classes']],
+                    [parent['LISTS']['adjust']['classes-expected-vect']])[0][0]
+        except:
+            pass
+        
+        
+        
+        parent['LISTS']['adjust']['bag-of-classes'].append(classes_sim)
         
         return parent, child
         
@@ -333,6 +391,12 @@ class Lists(DOM_Mapper):
 
             
             pass
+        
+        
+        expected_val = len(node['LISTS']['adjust']['bag-of-classes'])
+        expected_val = expected_val if expected_val != 0 else 1
+        node['LISTS']['adjust']['classes-coherence'] = (sum(node['LISTS']['adjust']['bag-of-classes']) * 100)/expected_val
+        
             
         return node
         
@@ -381,7 +445,7 @@ if __name__ == '__main__':
     
 #    lists = Lists()
 #    cetd = CETD()
-#    lists.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0000.json'))
+#    lists.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0003.json'))
 #
 #    cetd.count_tags(lists.DOM)
 #    cetd.text_density(lists.DOM)
@@ -389,20 +453,20 @@ if __name__ == '__main__':
 #    lists.absolute(lists.DOM)
 #    lists.relative(lists.DOM)
 #    lists.adjust(lists.DOM)
+#    print(lists.DOM['children'][0]['LISTS']['relative']['bag-of-classes'])
 #    features = [
 #            'xpath','LISTS.adjust.width', 'LISTS.adjust.height', 'LISTS.adjust.area', 
 #            'LISTS.adjust.font-size', 'LISTS.adjust.font-family-count', 'LISTS.adjust.background-color-count', 
-#            'LISTS.adjust.color-count','LISTS.adjust.tagsCount', 
+#            'LISTS.adjust.color-count', 'LISTS.adjust.classes-coherence','LISTS.adjust.tagsCount', 
 #            'LISTS.adjust.multi-tag-subtree', 'LISTS.adjust.standard-list-tag']
-#    features = ['xpath','LISTS.adjust.width', 'LISTS.adjust.height', 'LISTS.adjust.area',
-#                'LISTS.adjust.tagsCount', 'LISTS.adjust.multi-tag-subtree']
-##    
+#    features = ['xpath','LISTS.adjust.bag-of-classes-coherence']
+###    
 #    arr = lists.flatten(lists.DOM, features = features)
 #    xpaths = arr[:,0]
 #    X= arr[:,1:]
-#    
 #    print(X)
-
+#    print(lists.DOM['children'][0]['children'][4]['LISTS']['adjust']['classes-coherence'])
+#    print(lists.DOM['children'][0]['children'][4]['LISTS']['adjust']['bag-of-classes'])
 #    print(lists.DOM['children'][0]['textDensity'])
 #    print(lists.DOM['children'][0]['textDensity'])
 #    print(lists.DOM['children'][1]['textDensity'])
@@ -421,12 +485,11 @@ if __name__ == '__main__':
 #    plt.scatter(tsne[:,0], tsne[:,1], c = results.labels_)
 #    lists.markAll(xpaths, results.labels_)
     
-    # heuristic based method :
-    lists.remove(lists.DOM)
+     # heuristic based method :
+#    lists.remove(lists.DOM)
 #    
-#    
-    lists.update_DOM_tree()
+#    lists.update_DOM_tree()
 #    df = pd.DataFrame(X, columns = features[1:])
-#    print(df['LISTS.adjust.color-count'])
+#    print(df[df['LISTS.adjust.bag-of-classes-coherence'] >= 0.8])
     
     pass
