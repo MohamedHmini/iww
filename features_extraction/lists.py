@@ -35,7 +35,7 @@ class Lists(DOM_Mapper):
         pass
     
     
-    def detectLists(self, node, coherence_threshold = 0.95, sub_tags_threshold = 4):
+    def detectLists(self, node, coherence_threshold = (0.95,1), sub_tags_threshold = 4):
         
         self.coherence_threshold = coherence_threshold
         self.sub_tags_threshold = sub_tags_threshold
@@ -382,7 +382,7 @@ class Lists(DOM_Mapper):
         
         for i in range(nbr_nodes):
             node = self.xpath_based_node_search(self.DOM, xpaths[i])
-            euclidean_sim = pw.similarity(self.expected_vect, X[i,:])
+            euclidean_sim = pw.similarity(self.expected_vect, X[i,:], max_val = 0)
             node['coherence'] = str(euclidean_sim)
                     
         
@@ -401,7 +401,7 @@ class Lists(DOM_Mapper):
     def __mark_results(self,node):
         
         node['LISTS'] = ''        
-        node['mark'] = "1" if float(node['coherence']) >= self.coherence_threshold and len(node['children']) > sub_tags_threshold else "0"
+        node['mark'] = "1" if float(node['coherence']) >= self.coherence_threshold[0] and float(node['coherence']) <= self.coherence_threshold[1] and len(node['children']) > self.sub_tags_threshold else "0"
         
         return node
         
@@ -447,10 +447,13 @@ class Lists(DOM_Mapper):
 
 if __name__ == '__main__':
     
-    lists = Lists()
+#    lists = Lists()
 #    cetd = CETD()
-    lists.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0004.json'))
-    lists.detectLists(lists.DOM, coherence_threshold = 0.8, sub_tags_threshold = 4)
+#    lists.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0004.json'))
+#    lists.detectLists(lists.DOM, coherence_threshold = (0.80,1), sub_tags_threshold = 2)
+    lists.coherence_threshold =(0.80,1)
+    lists.get_final_results(lists.xpaths, lists.X)
+    lists.mark_results(lists.DOM)
     lists.update_DOM_tree()
     print(lists.DOM['tagsCount'])
 #    DOM = lists.DOM
