@@ -28,12 +28,31 @@ def is_bunch_of_zeros(vect):
     pass
 
 
+def get_max_distance(expected_vect, max_val = 1):
+    
+    max_vect = np.full(len(expected_vect), max_val)
+    max_distance = euclidean_distances([expected_vect],[max_vect])[0][0]
+    
+    return max_distance
+        
+    pass
+
+
+def similarity(expected_vect, observed_vect,max_val = 1):
+    
+    max_distance = get_max_distance(expected_vect, max_val)
+    euclidean_sim = euclidean_similarity(expected_vect, observed_vect, max_distance)
+    
+    return euclidean_sim
+    
+    pass
+
 
 def vectors_coherence(expected_vect, observed_vects):
     
     if is_bunch_of_zeros(expected_vect) != True:
-        max_vect = np.full(len(expected_vect), 1)
-        max_distance = euclidean_distances([expected_vect],[max_vect])[0][0]
+        
+        max_distance = get_max_distance(expected_vect, max_val = 1)
         
         observed_vect = [
                 euclidean_similarity(expected_vect, vect, max_distance) 
@@ -41,9 +60,8 @@ def vectors_coherence(expected_vect, observed_vects):
                 ]
         
         final_expected_vect = np.full(len(observed_vect), 1)
-        final_max_vect = np.full(len(observed_vect), 0)
         
-        final_max_distance = euclidean_distances([final_expected_vect],[final_max_vect])[0][0]
+        final_max_distance = get_max_distance(final_expected_vect, max_val = 0)
         
 #        print("EXPECTED VECTOR : {}".format(final_expected_vect))
 #        print("OBSERVED VECTOR : {}".format(observed_vect))

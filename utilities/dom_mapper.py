@@ -189,6 +189,24 @@ class DOM_Mapper:
         pass
     
     
+    def flatten_single_node(self, node, features):
+        
+        features_values = []
+        
+        for feature in features:
+            
+            feature_val = self.get_feature_by_path(node, feature)
+            features_values.append(feature_val)
+            
+            pass
+        
+        arr = np.array([features_values])    
+        
+        return arr
+        
+        pass
+    
+    
     def flatten(self, node, features):
         
         self.DOM_arr_features = features

@@ -30,35 +30,7 @@ class Lists(DOM_Mapper):
     
     def __init__(self):
         
-#        self.expected_vect = [1,1,1,1,1,1,1,1,1]
         
-        pass
-    
-    
-    def detectLists(self, node, coherence_threshold = 0.95, sub_tags_threshold = 4):
-        
-        self.coherence_threshold = coherence_threshold
-        self.sub_tags_threshold = sub_tags_threshold
-        
-        cetd = CETD()
-        cetd.count_tags(node)
-        self.absolute(node)
-        self.relative(node)
-        self.adjust(node)
-        
-        features = [
-            'xpath','LISTS.adjust.width', 'LISTS.adjust.height', 'LISTS.adjust.area', 
-            'LISTS.adjust.font-size', 'LISTS.adjust.font-family', 'LISTS.adjust.background-color', 
-            'LISTS.adjust.color', 'LISTS.adjust.bag-of-classes-coherence','LISTS.adjust.tagsCount']
-        
-        self.expected_vect = np.full(len(features)-1,1)
-    
-        arr = self.flatten(node, features = features)
-        self.xpaths = arr[:,0]
-        self.X= arr[:,1:]
-        
-        self.get_final_results(self.xpaths, self.X)
-        self.mark_results(node)
         
         pass
     
@@ -100,6 +72,24 @@ class Lists(DOM_Mapper):
         node['LISTS']['absolute']['width'] = node['bounds']['width']
         node['LISTS']['absolute']['height'] = node['bounds']['height']
         node['LISTS']['absolute']['area'] = node['bounds']['width']*node['bounds']['height']
+#        node['LISTS']['absolute']['top'] = node['bounds']['top']
+#        node['LISTS']['absolute']['bottom'] = node['bounds']['bottom']
+#        node['LISTS']['absolute']['left'] = node['bounds']['left']
+#        node['LISTS']['absolute']['right'] = node['bounds']['right']
+#        node['LISTS']['absolute']['x'] = node['bounds']['x']
+#        node['LISTS']['absolute']['y'] = node['bounds']['y']
+        
+        
+#        node['LISTS']['absolute']['font-size'] = node['style']['font-size']
+        
+#        node['LISTS']['absolute']['font-family'] = {}
+#        node['LISTS']['absolute']['font-family'][node['style']['font-family'].lower()] = 1
+        
+#        node['LISTS']['absolute']['color'] = {}
+#        node['LISTS']['absolute']['color'][node['style']['color']] = 1
+        
+#        node['LISTS']['absolute']['background-color'] = {}
+#        node['LISTS']['absolute']['background-color'][node['style']['background-color']] = 1
         
         node['LISTS']['absolute']['font-size'] = {node['style']['font-size']:1}
         node['LISTS']['absolute']['font-family'] = {node['style']['font-family'].lower():1}
@@ -135,7 +125,21 @@ class Lists(DOM_Mapper):
         parent['LISTS']['absolute']['width'] += child['LISTS']['absolute']['width']
         parent['LISTS']['absolute']['height'] += child['LISTS']['absolute']['height']
         parent['LISTS']['absolute']['area'] += child['LISTS']['absolute']['area']
+#        parent['LISTS']['absolute']['top'] += child['LISTS']['absolute']['top']
+#        parent['LISTS']['absolute']['bottom'] += child['LISTS']['absolute']['bottom']
+#        parent['LISTS']['absolute']['left'] += child['LISTS']['absolute']['left']
+#        parent['LISTS']['absolute']['right'] += child['LISTS']['absolute']['right']
+#        parent['LISTS']['absolute']['x'] += child['LISTS']['absolute']['x']
+#        parent['LISTS']['absolute']['y'] += child['LISTS']['absolute']['y']
         
+        
+#        parent['LISTS']['absolute']['font-size'] += child['LISTS']['absolute']['font-size']
+#        parent['LISTS']['absolute']['font-family'].update(child['LISTS']['absolute']['font-family'])
+#        parent['LISTS']['absolute']['background-color'].update(child['LISTS']['absolute']['background-color'])
+#        parent['LISTS']['absolute']['color'].update(child['LISTS']['absolute']['color'])
+#        parent['LISTS']['absolute']['classes'].update(child['LISTS']['absolute']['classes'])
+
+
         parent['LISTS']['absolute']['font-size'] = self.mergeDicts(
                 parent['LISTS']['absolute']['font-size'],
                 child['LISTS']['absolute']['font-size']
@@ -168,6 +172,21 @@ class Lists(DOM_Mapper):
     
     
     def __end_absolute(self, node):
+        
+# =============================================================================
+#         node['LISTS']['absolute']['width'] /= (len(node['children']) + 1)
+#         node['LISTS']['absolute']['height'] /= (len(node['children']) + 1)
+#         node['LISTS']['absolute']['area'] /= (len(node['children']) + 1)
+#         node['LISTS']['absolute']['top'] /= (len(node['children']) + 1)
+#         node['LISTS']['absolute']['bottom'] /= (len(node['children']) + 1)
+#         node['LISTS']['absolute']['left'] /= (len(node['children']) + 1)
+#         node['LISTS']['absolute']['right'] /= (len(node['children']) + 1)
+#         node['LISTS']['absolute']['x'] /= (len(node['children']) + 1)
+#         node['LISTS']['absolute']['y'] /= (len(node['children']) + 1)
+# =============================================================================
+#        node['LISTS']['absolute']['font-family-count'] = len(node['LISTS']['absolute']['font-family'])
+#        node['LISTS']['absolute']['background-color-count'] = len(node['LISTS']['absolute']['background-color'])
+#        node['LISTS']['absolute']['color-count'] = len(node['LISTS']['absolute']['color'])
 
         
         return node
@@ -219,10 +238,23 @@ class Lists(DOM_Mapper):
         child['LISTS']['relative']['width'] = self.child_parent_ratio(child['LISTS']['absolute']['width'],  parent['LISTS']['absolute']['width'])
         child['LISTS']['relative']['height'] = child['LISTS']['absolute']['height'] / parent['LISTS']['absolute']['height'] if  parent['LISTS']['absolute']['height'] != 0 else 0
         child['LISTS']['relative']['area'] = child['LISTS']['absolute']['area'] / parent['LISTS']['absolute']['area'] if  parent['LISTS']['absolute']['area'] != 0 else 0
+#        child['LISTS']['relative']['top'] = child['LISTS']['absolute']['top'] / parent['LISTS']['absolute']['top'] if  parent['LISTS']['absolute']['top'] != 0 else 0
+#        child['LISTS']['relative']['bottom'] = child['LISTS']['absolute']['bottom'] / parent['LISTS']['absolute']['bottom'] if  parent['LISTS']['absolute']['bottom'] != 0 else 0
+#        child['LISTS']['relative']['left'] = child['LISTS']['absolute']['left'] / parent['LISTS']['absolute']['left'] if  parent['LISTS']['absolute']['left'] != 0 else 0
+#        child['LISTS']['relative']['right'] = child['LISTS']['absolute']['right'] / parent['LISTS']['absolute']['right'] if  parent['LISTS']['absolute']['right'] != 0 else 0
+#        child['LISTS']['relative']['x'] = child['LISTS']['absolute']['x'] / parent['LISTS']['absolute']['x'] if  parent['LISTS']['absolute']['x'] != 0 else 0
+#        child['LISTS']['relative']['y'] = child['LISTS']['absolute']['y'] / parent['LISTS']['absolute']['y'] if  parent['LISTS']['absolute']['y'] != 0 else 0
+#        child['LISTS']['relative']['centerX'] = child['LISTS']['absolute']['centerX'] / parent['LISTS']['absolute']['centerX'] if  parent['LISTS']['absolute']['centerX'] != 0 else 0
+#        child['LISTS']['relative']['centerY'] = child['LISTS']['absolute']['centerY'] / parent['LISTS']['absolute']['centerY'] if  parent['LISTS']['absolute']['centerY'] != 0 else 0
+        
+#        child['LISTS']['relative']['font-size'] = child['LISTS']['absolute']['font-size'] / parent['LISTS']['absolute']['font-size'] if  parent['LISTS']['absolute']['font-size'] != 0 else 0
+#        child['LISTS']['relative']['background-color-count'] = self.child_parent_ratio(child['LISTS']['absolute']['background-color-count'], parent['LISTS']['absolute']['background-color-count'])
+#        child['LISTS']['relative']['color-count'] = self.child_parent_ratio(child['LISTS']['absolute']['color-count'], parent['LISTS']['absolute']['color-count'])
+#        child['LISTS']['relative']['font-family-count'] = self.child_parent_ratio(child['LISTS']['absolute']['font-family-count'], parent['LISTS']['absolute']['font-family-count'])
 
 
         child['LISTS']['relative']['tagsCount'] = child['tagsCount'] / parent['tagsCount'] if  parent['tagsCount'] != 0 else 0
-
+#        child['LISTS']['relative']['densitySum'] = child['densitySum'] / parent['densitySum'] if  parent['densitySum'] != 0 else 0
         
         child['LISTS']['relative']['font-size'] = self.to_bag_of(
                 child['LISTS']['absolute']['font-size'],
@@ -307,18 +339,26 @@ class Lists(DOM_Mapper):
         
         node['LISTS']['adjust'] = {}
         node['LISTS']['adjust']['expected_vect'] = expected_vect
+#        node['LISTS']['adjust']['classes-expected-vect'] = classes_expected_vect
         node['LISTS']['adjust']['bag-of-classes'] = []
         node['LISTS']['adjust']['bag-of-classes-coherence'] = self.feature_coherence(node, 'LISTS.absolute.bag-of-classes', 'LISTS.relative.bag-of-classes')
         node['LISTS']['adjust']['width'] = []
         node['LISTS']['adjust']['height'] = []
         node['LISTS']['adjust']['area'] = []
+#        node['LISTS']['adjust']['font-size'] = []
+#        node['LISTS']['adjust']['background-color-count'] = []
         node['LISTS']['adjust']['background-color'] = self.feature_coherence(node, 'LISTS.absolute.background-color', 'LISTS.relative.background-color')
         node['LISTS']['adjust']['font-size'] = self.feature_coherence(node, 'LISTS.absolute.font-size', 'LISTS.relative.font-size')
         node['LISTS']['adjust']['font-family'] = self.feature_coherence(node, 'LISTS.absolute.font-family', 'LISTS.relative.font-family')
         node['LISTS']['adjust']['color'] = self.feature_coherence(node, 'LISTS.absolute.color', 'LISTS.relative.color')
 
+#        node['LISTS']['adjust']['color-count'] = []
+#        node['LISTS']['adjust']['font-family-count'] = []
         node['LISTS']['adjust']['tagsCount'] = []
-             
+#        node['LISTS']['adjust']['densitySum'] = []
+        
+        
+        
         
         node['LISTS']['adjust']['multi-tag-subtree'] = 1 if len(node['children']) >= 2 else 0
         node['LISTS']['adjust']['standard-list-tag'] = 1 if self.isListTag(node['tagName']) else 0
@@ -334,8 +374,26 @@ class Lists(DOM_Mapper):
         parent['LISTS']['adjust']['width'].append(child['LISTS']['relative']['width'])
         parent['LISTS']['adjust']['height'].append(child['LISTS']['relative']['height'])
         parent['LISTS']['adjust']['area'].append(child['LISTS']['relative']['area'])
-        
+#        parent['LISTS']['adjust']['font-size'].append(child['LISTS']['relative']['font-size'])
+#        parent['LISTS']['adjust']['font-family-count'].append(child['LISTS']['relative']['font-family-count'])
+#        parent['LISTS']['adjust']['background-color-count'].append(child['LISTS']['relative']['background-color-count'])
+#        parent['LISTS']['adjust']['color-count'].append(child['LISTS']['relative']['color-count'])
         parent['LISTS']['adjust']['tagsCount'].append(child['LISTS']['relative']['tagsCount'])
+#        parent['LISTS']['adjust']['densitySum'].append(child['LISTS']['relative']['densitySum'])
+        
+        classes_sim = 1
+        
+#        try:
+#        
+#            classes_sim = cosine_similarity(
+#                    [child['LISTS']['relative']['bag-of-classes']],
+#                    [parent['LISTS']['adjust']['classes-expected-vect']])[0][0]
+#        except:
+#            pass
+        
+        
+        
+#        parent['LISTS']['adjust']['bag-of-classes'].append(classes_sim)
         
         return parent, child
         
@@ -348,64 +406,38 @@ class Lists(DOM_Mapper):
             node['LISTS']['adjust']['width'] = 1- euclidean_distances([node['LISTS']['adjust']['width']], [node['LISTS']['adjust']['expected_vect']])[0][0]
             node['LISTS']['adjust']['height'] = 1- euclidean_distances([node['LISTS']['adjust']['height']], [node['LISTS']['adjust']['expected_vect']])[0][0]
             node['LISTS']['adjust']['area'] = 1- euclidean_distances([node['LISTS']['adjust']['area']], [node['LISTS']['adjust']['expected_vect']])[0][0]
+#            node['LISTS']['adjust']['font-size'] = 1- euclidean_distances([node['LISTS']['adjust']['font-size']], [node['LISTS']['adjust']['expected_vect']])[0][0]
+#            node['LISTS']['adjust']['font-family-count'] = 1- euclidean_distances([node['LISTS']['adjust']['font-family-count']], [node['LISTS']['adjust']['expected_vect']])[0][0]
+#            node['LISTS']['adjust']['background-color-count'] = 1- euclidean_distances([node['LISTS']['adjust']['background-color-count']], [node['LISTS']['adjust']['expected_vect']])[0][0]
+#            node['LISTS']['adjust']['color-count'] = 1- euclidean_distances([node['LISTS']['adjust']['color-count']], [node['LISTS']['adjust']['expected_vect']])[0][0]
             node['LISTS']['adjust']['tagsCount'] = 1- euclidean_distances([node['LISTS']['adjust']['tagsCount']], [node['LISTS']['adjust']['expected_vect']])[0][0]
+#            node['LISTS']['adjust']['densitySum'] = cosine_similarity([node['LISTS']['adjust']['densitySum']], [node['LISTS']['adjust']['expected_vect']])[0][0]
 
         else:
             
             node['LISTS']['adjust']['width'] = 0
             node['LISTS']['adjust']['height'] = 0
             node['LISTS']['adjust']['area'] = 0
+#            node['LISTS']['adjust']['font-size'] = 0
+#            node['LISTS']['adjust']['font-family-count'] = 0
+#            node['LISTS']['adjust']['background-color-count'] = 0
+#            node['LISTS']['adjust']['color-count'] = 0
             node['LISTS']['adjust']['tagsCount'] = 0
+#            node['LISTS']['adjust']['densitySum'] = 0
 
             
             pass
         
-# =============================================================================
-#         features = [
-#             'xpath','LISTS.adjust.width', 'LISTS.adjust.height', 'LISTS.adjust.area', 
-#             'LISTS.adjust.font-size', 'LISTS.adjust.font-family', 'LISTS.adjust.background-color', 
-#             'LISTS.adjust.color', 'LISTS.adjust.classes-coherence','LISTS.adjust.tagsCount']
-#         
-#         final_expected_vect = [1,1,1,1,1,1,1,1,1]
-#                 
-#         self.flatten_single_node(features)
-# =============================================================================
+        
+#        expected_val = len(node['LISTS']['adjust']['bag-of-classes'])
+#        expected_val = expected_val if expected_val != 0 else 1
+#        node['LISTS']['adjust']['classes-coherence'] = (sum(node['LISTS']['adjust']['bag-of-classes']) * 100)/expected_val
+        
             
         return node
         
         pass
     
-    
-    def get_final_results(self, xpaths, X):
-        
-        nbr_nodes = len(xpaths)
-        
-        for i in range(nbr_nodes):
-            node = self.xpath_based_node_search(self.DOM, xpaths[i])
-            euclidean_sim = pw.similarity(self.expected_vect, X[i,:])
-            node['coherence'] = str(euclidean_sim)
-                    
-        
-        pass
-    
-    
-    
-    def mark_results(self, node):
-        
-        
-        self.map(node, fun1 = self.__mark_results)
-        
-        pass
-    
-    
-    def __mark_results(self,node):
-        
-        node['LISTS'] = ''        
-        node['mark'] = "1" if float(node['coherence']) >= self.coherence_threshold and len(node['children']) > sub_tags_threshold else "0"
-        
-        return node
-        
-        pass
     
     
     
@@ -415,7 +447,7 @@ class Lists(DOM_Mapper):
             
             node = self.xpath_based_node_search(self.DOM, xpaths[xpath])
             node['mark'] = str(labels[xpath])
-            node['LISTS'] = {}
+            node['LISTS']={}
             
             pass
                 
@@ -447,14 +479,10 @@ class Lists(DOM_Mapper):
 
 if __name__ == '__main__':
     
-    lists = Lists()
+#    lists = Lists()
 #    cetd = CETD()
-    lists.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0004.json'))
-    lists.detectLists(lists.DOM, coherence_threshold = 0.8, sub_tags_threshold = 4)
-    lists.update_DOM_tree()
-    print(lists.DOM['tagsCount'])
-#    DOM = lists.DOM
-#    meta = lists.meta_data
+#    lists.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0003.json'))
+#
 #    cetd.count_tags(lists.DOM)
 #    cetd.text_density(lists.DOM)
 #    cetd.density_sum(lists.DOM)
@@ -466,15 +494,14 @@ if __name__ == '__main__':
 #    features = [
 #            'xpath','LISTS.adjust.width', 'LISTS.adjust.height', 'LISTS.adjust.area', 
 #            'LISTS.adjust.font-size', 'LISTS.adjust.font-family', 'LISTS.adjust.background-color', 
-#            'LISTS.adjust.color', 'LISTS.adjust.bag-of-classes-coherence','LISTS.adjust.tagsCount']
+#            'LISTS.adjust.color', 'LISTS.adjust.classes-coherence','LISTS.adjust.tagsCount', 
+#            'LISTS.adjust.multi-tag-subtree', 'LISTS.adjust.standard-list-tag']
 #    features = ['xpath','LISTS.adjust.bag-of-classes-coherence']
-#    
+###    
 #    arr = lists.flatten(lists.DOM, features = features)
 #    xpaths = arr[:,0]
 #    X= arr[:,1:]
 #    print(X)
-#    lists.get_final_results(xpaths, X)
-#    lists.mark_results(lists.DOM)
 #    print(lists.DOM['children'][0]['children'][4]['LISTS']['adjust']['classes-coherence'])
 #    print(lists.DOM['children'][0]['children'][4]['LISTS']['adjust']['bag-of-classes'])
 #    print(lists.DOM['children'][0]['textDensity'])
@@ -497,8 +524,9 @@ if __name__ == '__main__':
     
      # heuristic based method :
 #    lists.remove(lists.DOM)
+#    
 #    lists.update_DOM_tree()
-#    df = pd.DataFrame(X)
-#    print(df)
+#    df = pd.DataFrame(X, columns = features[1:])
+#    print(df[df['LISTS.adjust.bag-of-classes-coherence'] >= 0.8])
     
     pass
