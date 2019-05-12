@@ -1,4 +1,12 @@
-# IWW-IntelliWebWrapper- [initial development phase]
-a web-mining library for web-content-extraction using machine learning algorithms.
+# IWW-IntelliWebWrapper- [development phase]
+an AI based web-mining library for web-content-extraction using machine learning algorithms.
 
-P.S : still in 'initial development phase'
+some of the features can be exploited now, and they are available in the code, things such as:
+  
+  - DOM extractor, mapper and reducer...
+  - lists detector algorithm.
+  - CETD algorithm.
+  - DOM tags detector script (highlighting the chosen nodes).
+
+
+P.S : still in 'development phase'
