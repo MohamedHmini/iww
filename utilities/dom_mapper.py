@@ -262,6 +262,7 @@ class DOM_Mapper:
         pass
     
     
+    ##################    NEEDS AN UPDATE!!    #####################
     def retrieve_DOM_arr_file(self, file_path):
         
         df = pd.read_csv(file_path)
@@ -406,14 +407,6 @@ class DOM_Mapper:
     
     
     pass
-
-isin = 0
-notin = 0
-
-def display(node):
-    print(type(node['mark']))
-        
-    return node
 
 
 

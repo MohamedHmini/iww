@@ -26,6 +26,12 @@ class IWW:
     
     
     
+    def detect():
+        #...
+        pass
+    
+    
+    
     pass
 
 

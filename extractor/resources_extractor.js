@@ -16,11 +16,13 @@ commander
         
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
+	console.log("HTTP request is about to be sent...")
         await page.goto(commander.site);
-
+	console.log("HTTP request is sent!")
 
         await page.setViewport({ width: 1600, height: 4000});
-
+	
+	console.log("TRAVERSING THE DOM TREE...")
         const traversed_DOM_tree = await page.evaluate((rgb2hex)=>{
 
         		var clean_style_properties = (styles) =>{
@@ -159,6 +161,8 @@ commander
                 
         }, rgb2hex);
 
+	console.log("DOM TREE HAS BEEN TRAVERSED SUCCESSFULLY!")
+	console.log("NOW COLLECTING META DATA...")
 
         var meta_data = await page.evaluate(()=>{
 
@@ -225,14 +229,17 @@ commander
                 
         })
 
-        var document = {
+	console.log("THE META DATA HAVE BEEN COLLECTED SUCCESSFULLY!")
+	console.log("GENERATING THE JSON FILE...")        
+
+	var document = {
 		"DOM":traversed_DOM_tree,
                 "meta_data":meta_data,
                 "webpage_url":commander.site
         }
 
         fs.writeFile(commander.filedirectory,JSON.stringify(document),(err)=>{})
-
+	console.log("MISSION COMPLETED!")
         // console.log(document)
 	await browser.close();
 	

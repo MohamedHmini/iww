@@ -103,7 +103,7 @@ var getJsonizedDOM = (file) => {
             var xpath_details = ''
             var DOM_node = NaN
 
-            if(node.mark == "1"){
+            if(node.CETD_mark == "1"){
               counter++
               xpath_details = xpath_detacher(node.real_xpath)
               xpath_details.pop()

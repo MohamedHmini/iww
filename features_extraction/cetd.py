@@ -23,6 +23,18 @@ class CETD(DOM_Mapper):
         pass
     
     
+    def apply(self, node):
+        
+        self.count_tags(node)
+        self.text_density(node)
+        self.density_sum(node)
+        self.max_density_sum(node)
+        
+        self.thresholding(node)
+        self.mark_content(node, node, self.threshold)
+        
+        pass
+    
     
     def count_tags(self, node):
         
@@ -102,7 +114,7 @@ class CETD(DOM_Mapper):
     
     def mark_DOM_node(self, node, mark):
         
-        node['mark'] = mark        
+        node['CETD_mark'] = mark        
         
         for child in node['children']:
             self.mark_DOM_node(child, mark)
@@ -111,14 +123,14 @@ class CETD(DOM_Mapper):
      
     
     
-    def thresholding(self):
+    def thresholding(self, root):
         
         threshold = -1.0
-        node = self.search_DOM_node(self.DOM, att = 'densitySum', value = self.max_density_sum)
+        node = self.search_DOM_node(root, att = 'densitySum', value = self.max_density_sum)
         threshold = node['textDensity']
         self.mark_DOM_node(node, 1)
         
-        parent = self.xpath_based_node_search(self.DOM, node['parent_xpath'])
+        parent = self.xpath_based_node_search(root, node['parent_xpath'])
         
         while parent != None:        
             if (threshold - parent['textDensity']) > -1:
@@ -126,7 +138,7 @@ class CETD(DOM_Mapper):
                 
             self.mark_DOM_node(parent, 2)
             
-            parent = self.xpath_based_node_search(self.DOM, parent['parent_xpath'])
+            parent = self.xpath_based_node_search(root, parent['parent_xpath'])
             pass
         
         self.threshold = threshold
@@ -137,36 +149,36 @@ class CETD(DOM_Mapper):
     
    
     
-    def find_max_density_sum_tag(self, node):
+    def find_max_density_sum_tag(self, root, node):
         
         target = self.search_DOM_node(node, 'densitySum', self.max_density_sum)   
         try:
-            if target['mark'] == 1:
+            if target['CETD_mark'] == 1:
                 return None
         except:
             return None
         
         self.mark_DOM_node(target, 1)
         
-        parent = self.xpath_based_node_search(self.DOM, target['parent_xpath'])
+        parent = self.xpath_based_node_search(root, target['parent_xpath'])
         
         while parent != None:        
                 
-            parent['mark'] = 2            
-            parent = self.xpath_based_node_search(self.DOM, parent['parent_xpath'])
+            parent['CETD_mark'] = 2            
+            parent = self.xpath_based_node_search(root, parent['parent_xpath'])
             
             pass
         
         pass
     
     
-    def mark_content(self, node, threshold):
+    def mark_content(self, root, node, threshold):
         
-        if node['mark'] != 1 and (node['textDensity'] - threshold) > -1:
-            self.find_max_density_sum_tag(node)
+        if node['CETD_mark'] != 1 and (node['textDensity'] - threshold) > -1:
+            self.find_max_density_sum_tag(root, node)
                 
             for child in node['children']:
-                self.mark_content(child, threshold)
+                self.mark_content(root, child, threshold)
         
         pass
     
@@ -200,22 +212,23 @@ class CETD(DOM_Mapper):
 if __name__ == '__main__':
     
 # =============================================================================
-    cetd = CETD()
+#    cetd = CETD()
      
-    cetd.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0003.json'))
+#    cetd.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0008.json'))
      
-    cetd.count_tags(cetd.DOM)
-    cetd.text_density(cetd.DOM)
-    cetd.density_sum(cetd.DOM)
-    cetd.max_density_sum(cetd.DOM)
-    
-    cetd.thresholding()
-    cetd.mark_content(cetd.DOM, cetd.threshold)
+#    cetd.count_tags(cetd.DOM)
+#    cetd.text_density(cetd.DOM)
+#    cetd.density_sum(cetd.DOM)
+#    cetd.max_density_sum(cetd.DOM)
+#    
+#    cetd.thresholding()
+#    cetd.mark_content(cetd.DOM, cetd.threshold)
+#    cetd.update_DOM_tree()
+#    cetd.apply(cetd.DOM) 
     cetd.update_DOM_tree()
-     
-    arr = cetd.toArray(['tagName','xpath','mark'])
-    df = pd.DataFrame(arr, columns = ['tagName','xpath','mark'])
-    print(df[df['mark'] == "1"])
+#    arr = cetd.flatten(cetd.DOM, ['tagName','xpath','CETD_mark'])
+#    df = pd.DataFrame(arr, columns = ['tagName','xpath','CETD_mark'])
+#    print(df[df['CETD_mark'] == "1"])
 # =============================================================================
     
     
