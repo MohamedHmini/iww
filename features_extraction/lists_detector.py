@@ -35,15 +35,18 @@ class Lists_Detector(DOM_Mapper):
         pass
     
     
-    def apply(self, node, coherence_threshold = (0.95,1), sub_tags_threshold = 2):
+    def apply(self, 
+              node, 
+              coherence_threshold = (0.95,1), 
+              sub_tags_threshold = 2, 
+              mode = "full"):
         
         self.coherence_threshold = coherence_threshold
         self.sub_tags_threshold = sub_tags_threshold
         
         cetd = CETD()
-        
-#        cetd.count_tags(node)
         cetd.apply(self.DOM)
+
         self.absolute(node)
         self.relative(node)
         self.adjust(node)
@@ -223,7 +226,7 @@ class Lists_Detector(DOM_Mapper):
         child['LISTS']['relative']['area'] = child['LISTS']['absolute']['area'] / parent['LISTS']['absolute']['area'] if  parent['LISTS']['absolute']['area'] != 0 else 0
 
 
-        child['LISTS']['relative']['tagsCount'] = child['tagsCount'] / parent['tagsCount'] if  parent['tagsCount'] != 0 else 0
+        child['LISTS']['relative']['tagsCount'] = child['CETD']['tagsCount'] / parent['CETD']['tagsCount'] if  parent['CETD']['tagsCount'] != 0 else 0
 
         
         child['LISTS']['relative']['font-size'] = self.to_bag_of(
@@ -384,7 +387,7 @@ class Lists_Detector(DOM_Mapper):
         for i in range(nbr_nodes):
             node = self.xpath_based_node_search(self.DOM, xpaths[i])
             euclidean_sim = pw.similarity(self.expected_vect, X[i,:], max_val = 0)
-            node['coherence'] = str(euclidean_sim)
+            node['LISTS']['coherence'] = str(euclidean_sim)
                     
         
         pass
@@ -400,9 +403,8 @@ class Lists_Detector(DOM_Mapper):
     
     
     def __mark_results(self,node):
-        
-        node['LISTS'] = ''        
-        node['mark'] = "1" if float(node['coherence']) >= self.coherence_threshold[0] and float(node['coherence']) <= self.coherence_threshold[1] and len(node['children']) > self.sub_tags_threshold and node["CETD_mark"] == "1" else "0"
+               
+        node['LISTS']['mark'] = "1" if float(node['LISTS']['coherence']) >= self.coherence_threshold[0] and float(node['LISTS']['coherence']) <= self.coherence_threshold[1] and len(node['children']) > self.sub_tags_threshold else "0"
         
         return node
         
@@ -415,8 +417,8 @@ class Lists_Detector(DOM_Mapper):
         for xpath in range(len(xpaths)):
             
             node = self.xpath_based_node_search(self.DOM, xpaths[xpath])
-            node['mark'] = str(labels[xpath])
-            node['LISTS'] = {}
+            node['LISTS']['mark'] = str(labels[xpath])
+#            node['LISTS'] = {}
             
             pass
                 
@@ -433,7 +435,7 @@ class Lists_Detector(DOM_Mapper):
     def __remove(self, node):
         
         if len(node['children']) < 4:
-            node['mark'] = "-1"
+            node['LISTS']['mark'] = "-1"
         
         return node
         pass

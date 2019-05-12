@@ -293,7 +293,7 @@ class DOM_Mapper:
     
     def search_DOM_node(self, node, att, value):
         
-        if node[att] == value:
+        if self.get_feature_by_path(node, att) == value:
             return node
         
         for child in node['children']:

@@ -45,7 +45,8 @@ class CETD(DOM_Mapper):
     
     def __init_count_tags(self, node):
         
-        node['tagsCount'] = len(node['children'])
+        node['CETD'] = {}
+        node['CETD']['tagsCount'] = len(node['children'])
         
         return node
         
@@ -53,7 +54,7 @@ class CETD(DOM_Mapper):
     
     def __count_tags(self, node, child):
         
-        node['tagsCount'] += child['tagsCount']
+        node['CETD']['tagsCount'] += child['CETD']['tagsCount']
         
         return node,child
         pass
@@ -67,14 +68,14 @@ class CETD(DOM_Mapper):
     
     def __text_density(self, node):
         
-        tagsCount = (node['tagsCount'] if node['tagsCount'] > 0 else 1)
+        tagsCount = (node['CETD']['tagsCount'] if node['CETD']['tagsCount'] > 0 else 1)
         charsCount = 0
         try:
             charsCount = len(node['text'])
         except:
             pass
         
-        node['textDensity'] = charsCount/tagsCount
+        node['CETD']['textDensity'] = charsCount/tagsCount
         
         return node
         
@@ -90,7 +91,7 @@ class CETD(DOM_Mapper):
     
     def __init_density_sum(self, node):
         
-        node['densitySum'] = 0
+        node['CETD']['densitySum'] = 0
         
         return node
         
@@ -98,7 +99,7 @@ class CETD(DOM_Mapper):
     
     def __density_sum(self, node, child):
         
-        node['densitySum'] += child['textDensity']
+        node['CETD']['densitySum'] += child['CETD']['textDensity']
         
         return node,child
         pass
@@ -106,7 +107,7 @@ class CETD(DOM_Mapper):
     
     def max_density_sum(self, node):
         
-        self.max_density_sum = self.reduce(node, fun1 = lambda x : x['densitySum'], fun2 = lambda x,y : x if x > y else y)
+        self.max_density_sum = self.reduce(node, fun1 = lambda x : x['CETD']['densitySum'], fun2 = lambda x,y : x if x > y else y)
         
         pass
     
@@ -114,7 +115,7 @@ class CETD(DOM_Mapper):
     
     def mark_DOM_node(self, node, mark):
         
-        node['CETD_mark'] = mark        
+        node['CETD']['mark'] = mark        
         
         for child in node['children']:
             self.mark_DOM_node(child, mark)
@@ -126,15 +127,15 @@ class CETD(DOM_Mapper):
     def thresholding(self, root):
         
         threshold = -1.0
-        node = self.search_DOM_node(root, att = 'densitySum', value = self.max_density_sum)
-        threshold = node['textDensity']
+        node = self.search_DOM_node(root, att = 'CETD.densitySum', value = self.max_density_sum)
+        threshold = node['CETD']['textDensity']
         self.mark_DOM_node(node, 1)
         
         parent = self.xpath_based_node_search(root, node['parent_xpath'])
         
         while parent != None:        
-            if (threshold - parent['textDensity']) > -1:
-                threshold = parent['textDensity']
+            if (threshold - parent['CETD']['textDensity']) > -1:
+                threshold = parent['CETD']['textDensity']
                 
             self.mark_DOM_node(parent, 2)
             
@@ -151,9 +152,9 @@ class CETD(DOM_Mapper):
     
     def find_max_density_sum_tag(self, root, node):
         
-        target = self.search_DOM_node(node, 'densitySum', self.max_density_sum)   
+        target = self.search_DOM_node(node, 'CETD.densitySum', self.max_density_sum)   
         try:
-            if target['CETD_mark'] == 1:
+            if target['CETD']['mark'] == 1:
                 return None
         except:
             return None
@@ -164,7 +165,7 @@ class CETD(DOM_Mapper):
         
         while parent != None:        
                 
-            parent['CETD_mark'] = 2            
+            parent['CETD']['mark'] = 2            
             parent = self.xpath_based_node_search(root, parent['parent_xpath'])
             
             pass
@@ -174,7 +175,7 @@ class CETD(DOM_Mapper):
     
     def mark_content(self, root, node, threshold):
         
-        if node['CETD_mark'] != 1 and (node['textDensity'] - threshold) > -1:
+        if node['CETD']['mark'] != 1 and (node['CETD']['textDensity'] - threshold) > -1:
             self.find_max_density_sum_tag(root, node)
                 
             for child in node['children']:
@@ -212,9 +213,9 @@ class CETD(DOM_Mapper):
 if __name__ == '__main__':
     
 # =============================================================================
-#    cetd = CETD()
+    cetd = CETD()
      
-#    cetd.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0008.json'))
+    cetd.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0010.json'))
      
 #    cetd.count_tags(cetd.DOM)
 #    cetd.text_density(cetd.DOM)
@@ -224,11 +225,10 @@ if __name__ == '__main__':
 #    cetd.thresholding()
 #    cetd.mark_content(cetd.DOM, cetd.threshold)
 #    cetd.update_DOM_tree()
-#    cetd.apply(cetd.DOM) 
-    cetd.update_DOM_tree()
-#    arr = cetd.flatten(cetd.DOM, ['tagName','xpath','CETD_mark'])
-#    df = pd.DataFrame(arr, columns = ['tagName','xpath','CETD_mark'])
-#    print(df[df['CETD_mark'] == "1"])
+    cetd.apply(cetd.DOM) 
+#    cetd.update_DOM_tree()
+    arr = cetd.flatten(cetd.DOM, ['CETD.tagsCount','CETD.densitySum'])
+    print(pd.DataFrame(arr))
 # =============================================================================
     
     

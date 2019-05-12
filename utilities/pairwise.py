@@ -82,6 +82,13 @@ def vectors_coherence(expected_vect, observed_vects):
 
 
 
+def simple_euclidean_similarity(vect1, vect2):
+    
+    d = euclidean_distances([vect1],[vect2])[0][0]
+    return 1/(1+d)
+    
+    pass
+
 
 def __vectors_coherence():
     
