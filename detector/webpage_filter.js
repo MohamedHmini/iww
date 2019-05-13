@@ -8,6 +8,8 @@ commander
   .version('0.1.0')
   .option('-i, --inputFile [inputFile]', 'The webpage generated JSON file location')
   .option('-o, --outputFile [outputFile]', '')
+  .option('-m, --markPath [markPath]', '')
+  .option('-v, --markValue [markValue]', '')
   .parse(process.argv);
 
 
@@ -39,14 +41,37 @@ var getJsonizedDOM = (file) => {
         const page = await browser.newPage();
 
         var webpage_json = await getJsonizedDOM(commander.inputFile)        
+	var input_data = {
+		"webpage_json":webpage_json,
+		"commander":commander
+	}	
 
         await page.goto(webpage_json.webpage_url);
-        
+	console.log("HTTP RESPONSE!")        
         await page.setViewport({ width: 1600, height: 20000});
         
 
-        var counter = await page.evaluate((webpage_json)=>{
+        var counter = await page.evaluate((input_data)=>{
           
+	  var get_feature_with_path = (node, feature_path) =>{
+
+		var feature_seq = feature_path.split(".");
+		var feature_val = node;
+		
+		try{		
+
+			feature_seq.forEach((feature)=>{
+				
+				feature_val = feature_val[feature]
+			
+			})
+		}catch(e){}
+		
+
+		return feature_val
+
+	  }
+
           var xpath_reader = (xpath) =>{
           
             var xpath_splited = xpath.split("/")
@@ -103,7 +128,7 @@ var getJsonizedDOM = (file) => {
             var xpath_details = ''
             var DOM_node = NaN
 
-            if(node.CETD_mark == "1"){
+            if(get_feature_with_path(node, input_data.commander.markPath) == input_data.commander.markValue){
               counter++
               xpath_details = xpath_detacher(node.real_xpath)
               xpath_details.pop()
@@ -126,10 +151,10 @@ var getJsonizedDOM = (file) => {
           }
 
 
-          traverse_JSON_DOM_tree(webpage_json.DOM)
+          traverse_JSON_DOM_tree(input_data.webpage_json.DOM)
           return counter
           
-        }, webpage_json)
+        }, input_data)
 
         console.log("NUMBER OF SELECTED NODES : " + counter)
         await page.screenshot({

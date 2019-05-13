@@ -38,6 +38,19 @@ def CMD(script, url, file):
 
 
 
+def extract(url, destination):
+    
+    if os.path.exists(destination) == False:
+    
+        file_path = os.path.realpath(destination)
+        CMD('resources_extractor.js', url, file_path)
+        
+        pass
+    
+    pass
+
+
+
 def feed_extractor(urls_path, destination_directory, edge):
     
     urls_dataset = get_urls(urls_path, edge)
@@ -50,11 +63,7 @@ def feed_extractor(urls_path, destination_directory, edge):
         file_name = "%04d.json" % index
         destination = os.path.realpath(os.path.join(destination_directory,file_name))
         
-        if os.path.exists(destination) == False:
-        
-            CMD('resources_extractor.js', url, destination)
-            
-            pass
+        extract(url, destination)
         
         pass
     
@@ -65,11 +74,10 @@ def feed_extractor(urls_path, destination_directory, edge):
 
 
 
-
 if __name__ == '__main__':
     
-    destination_path = os.path.realpath(os.path.join(project_path, 'datasets/extracted_data'))
-    feed_extractor("../datasets/webpages_urls.txt",destination_path, 1)
+#    destination_path = os.path.realpath(os.path.join(project_path, 'datasets/extracted_data'))
+#    feed_extractor(urls_path = "../datasets/webpages_urls.txt", destination_directory = destination_path, 1)
     
     pass
 

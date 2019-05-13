@@ -4,10 +4,10 @@ import pandas as pd
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.max_rows', 100)
 
-sys.path.append(os.path.realpath(os.path.abspath('../utilities')))
+#sys.path.append(os.path.realpath(os.path.abspath('../')))
 
 
-from dom_mapper import DOM_Mapper
+from iww.utils.dom_mapper import DOM_Mapper
 
 
 
@@ -215,7 +215,7 @@ if __name__ == '__main__':
 # =============================================================================
     cetd = CETD()
      
-    cetd.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0010.json'))
+    cetd.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/test.json'))
      
 #    cetd.count_tags(cetd.DOM)
 #    cetd.text_density(cetd.DOM)

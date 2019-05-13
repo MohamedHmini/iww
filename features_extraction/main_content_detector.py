@@ -2,16 +2,17 @@ import sys
 import os
 import numpy as np
 import pandas as pd
-from cetd import CETD
+
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.max_rows', 100)
 
 
 
-sys.path.append(os.path.realpath(os.path.abspath('../utilities')))
+#sys.path.append(os.path.realpath(os.path.abspath('../')))
 
-from dom_mapper import DOM_Mapper
-import pairwise as pw
+from iww.features_extraction.cetd import CETD
+from iww.utils.dom_mapper import DOM_Mapper
+import iww.utils.pairwise as pw
 
 
 
@@ -28,9 +29,10 @@ class MCD(DOM_Mapper):
     
     
     
-    def apply(self, node, threshold = 1):
+    def apply(self, node, min_ratio_threshold = 0.0, nbr_nodes_threshold = 1):
         
-        self.threshold = threshold
+        self.nbr_nodes_threshold = nbr_nodes_threshold
+        self.min_ratio_threshold = min_ratio_threshold
         
         cetd = CETD()
         cetd.count_tags(node)
@@ -118,9 +120,11 @@ class MCD(DOM_Mapper):
         
         features = ["xpath", "MCD.iscontent"]
         arr = self.flatten(node, features)
-        
+                
         df = pd.DataFrame(arr, columns = features)
-        df = df.sort_values(['MCD.iscontent'], ascending = False)[:self.threshold]
+        df["MCD.iscontent"] = pd.to_numeric(df["MCD.iscontent"])
+        df = df[df['MCD.iscontent'] > self.min_ratio_threshold]
+        df = df.sort_values(['MCD.iscontent'], ascending = False)[:self.nbr_nodes_threshold]
         
         for element in df.values:
             
@@ -149,11 +153,11 @@ class MCD(DOM_Mapper):
 if __name__ == "__main__":
 
     mcd = MCD()
-    mcd.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0001.json'))
+    mcd.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0007.json'))
     
-    mcd.apply(mcd.DOM, threshold = 3)
+    mcd.apply(mcd.DOM, min_ratio_threshold = 0.5, nbr_nodes_threshold = 3)
     
-#    mcd.update_DOM_tree()
+    mcd.update_DOM_tree()
     
     arr = mcd.flatten(mcd.DOM, features = ['MCD.iscontent', 'MCD.mark'])
     print(arr[arr[:,1] == "1"])

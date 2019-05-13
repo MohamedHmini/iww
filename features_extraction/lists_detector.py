@@ -2,7 +2,6 @@ import sys
 import os
 import pandas as pd
 import numpy as np
-from cetd import CETD
 import itertools
 from sklearn.manifold import TSNE
 from sklearn.cluster import DBSCAN
@@ -15,12 +14,12 @@ pd.set_option('display.max_columns', 500)
 pd.set_option('display.max_rows', 100)
 
 
+#sys.path.append(os.path.realpath(os.path.abspath('../')))
 
-sys.path.append(os.path.realpath(os.path.abspath('../utilities')))
-
-
-from dom_mapper import DOM_Mapper
-import pairwise as pw
+from iww.features_extraction.cetd import CETD
+from iww.features_extraction.main_content_detector import MCD
+from iww.utils.dom_mapper import DOM_Mapper
+import iww.utils.pairwise as pw
 
 
 
@@ -66,6 +65,15 @@ class Lists_Detector(DOM_Mapper):
         self.mark_results(node)
         
         pass
+    
+    
+    
+    def get_main_list(self, node, min_ratio_threshold = 0.0, nbr_nodes_threshold = 1):
+        
+        mcd = MCD()        
+        
+        pass
+    
     
     
     def original(self):
@@ -311,7 +319,7 @@ class Lists_Detector(DOM_Mapper):
         
         
         node['LISTS']['adjust'] = {}
-        node['LISTS']['adjust']['expected_vect'] = expected_vect
+        node['LISTS']['adjust']['expected_vect'] = list(expected_vect)
         node['LISTS']['adjust']['bag-of-classes-coherence'] = self.feature_coherence(node, 'LISTS.absolute.bag-of-classes', 'LISTS.relative.bag-of-classes')
         node['LISTS']['adjust']['width'] = []
         node['LISTS']['adjust']['height'] = []
@@ -348,7 +356,7 @@ class Lists_Detector(DOM_Mapper):
     
     def __end_adjust(self, node):
         
-        if node['LISTS']['adjust']['expected_vect'].shape[0] != 0:
+        if len(node['LISTS']['adjust']['expected_vect']) != 0:
             node['LISTS']['adjust']['width'] = 1- euclidean_distances([node['LISTS']['adjust']['width']], [node['LISTS']['adjust']['expected_vect']])[0][0]
             node['LISTS']['adjust']['height'] = 1- euclidean_distances([node['LISTS']['adjust']['height']], [node['LISTS']['adjust']['expected_vect']])[0][0]
             node['LISTS']['adjust']['area'] = 1- euclidean_distances([node['LISTS']['adjust']['area']], [node['LISTS']['adjust']['expected_vect']])[0][0]
@@ -450,17 +458,22 @@ class Lists_Detector(DOM_Mapper):
 
 if __name__ == '__main__':
     
-#    lists = Lists_Detector()
+    lists = Lists_Detector()
 #    cetd = CETD()
-#    lists.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0000.json'))
-#    lists.detectLists(lists.DOM, coherence_threshold = (0.80,1), sub_tags_threshold = 1)
+#    lists.DOM = DOM
+#    lists.meta_data = meta
+#    lists.webpage_url= url
+    lists.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0007.json'))
+    lists.apply(lists.DOM, coherence_threshold = (0.80,1), sub_tags_threshold = 1)
 #    lists.coherence_threshold =(0.80,1)
 #    lists.get_final_results(lists.xpaths, lists.X)
 #    lists.mark_results(lists.DOM)
+#    lists.DOM_file_path = os.path.realpath('../datasets/extracted_data/0010.json')
     lists.update_DOM_tree()
 #    print(lists.DOM['tagsCount'])
 #    DOM = lists.DOM
 #    meta = lists.meta_data
+#    url= lists.webpage_url
 #    cetd.count_tags(lists.DOM)
 #    cetd.text_density(lists.DOM)
 #    cetd.density_sum(lists.DOM)
