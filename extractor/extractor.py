@@ -43,7 +43,7 @@ def extract(url, destination):
     if os.path.exists(destination) == False:
     
         file_path = os.path.realpath(destination)
-        CMD('resources_extractor.js', url, file_path)
+        CMD('c:\\users\\mohamedhmini\\data_analysis_doodlings\\iww\\iww\\extractor\\resources_extractor.js', url, file_path)
         
         pass
     

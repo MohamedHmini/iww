@@ -55,6 +55,90 @@ class MCD(DOM_Mapper):
         pass
     
     
+    def __remove_main_nodes(self, node):
+        
+        node['MCD']['main_node'] = "0"
+            
+        return node
+        pass
+    
+    def __prepare_integrator_dataframe(self, node, nbr_nodes, condition_features):
+        
+        features = ["xpath", "MCD.mark", "MCD.iscontent"] + [feature for feature,val in condition_features]
+        arr = self.flatten(node, features)
+        df = pd.DataFrame(arr, columns = features)
+        
+        for feature, val in condition_features:
+            df = df[df[feature] == val]
+        
+        df = df.sort_values(['MCD.iscontent'], ascending = False)[:nbr_nodes]
+        
+        return df
+        
+        pass
+    
+    def __ancestry_based_integration(self, node, df):
+        
+        for element in df.values:                
+            is_main_content = element[1] == "1"
+                
+            if is_main_content == False:
+                xpath_details = self.xpath_reader(element[0])
+                result = self.__integrate_other_algorithms_results(root = node, parent_xpath = xpath_details['parent_xpath'])
+                if result == True:
+                    DOM_element = self.xpath_based_node_search(node, element[0])
+                    DOM_element["MCD"]["main_node"] = "1"
+            else:
+                DOM_element = self.xpath_based_node_search(node, element[0])
+                DOM_element["MCD"]["main_node"] = "1"
+        
+        pass
+    
+    
+    def __self_only_based_integration(self, node, df):
+        
+        df = df[df["MCD.mark"] == "1"]
+            
+        for element in df.values:
+            DOM_element = self.xpath_based_node_search(node, element[0])
+            DOM_element["MCD"]["main_node"] = "1"
+
+            pass
+        
+        pass
+    
+    def integrate_other_algorithms_results(self, node, nbr_nodes = -1, mode = "ancestry", condition_features = [("LISTS.mark","1")]):
+        
+        self.map(node = node, fun1 = self.__remove_main_nodes)
+        
+        df = self.__prepare_integrator_dataframe(node, nbr_nodes, condition_features)
+        
+        if mode == "ancestry":
+            self.__ancestry_based_integration(node, df)                    
+        elif mode == "self-only":            
+            self.__self_only_based_integration(node, df)            
+            
+        
+        pass
+    
+    
+    def __integrate_other_algorithms_results(self, root, parent_xpath):
+        
+        parent_node = self.xpath_based_node_search(root, parent_xpath)
+        
+        if parent_node['MCD']['mark'] == "1":
+            print(print(parent_node['xpath']))
+            return True
+       
+        if parent_node['parent_xpath'] != '':
+            return self.__integrate_other_algorithms_results(root, parent_node['parent_xpath'])            
+        
+        return False
+        
+        pass
+    
+    
+    
     def origin(self, node):
         
         node['bounds']['centerX'] = node['bounds']['width'] / 2
@@ -73,8 +157,8 @@ class MCD(DOM_Mapper):
     def __relative(self, node):
         
         node['MCD'] = {}
-        node['MCD']['width'] = node['bounds']['width'] / self.DOM['bounds']['width']
-        node['MCD']['height'] = node['bounds']['height'] / self.DOM['bounds']['height']
+        node['MCD']['width'] = node['bounds']['width'] / self.DOM['bounds']['width'] if self.DOM['bounds']['width'] != 0 else 1
+        node['MCD']['height'] = node['bounds']['height'] / self.DOM['bounds']['height'] if self.DOM['bounds']['height'] != 0 else 1
         node['MCD']['area'] = (node['bounds']['width']*node['bounds']['height']) / (self.DOM['bounds']['width']*self.DOM['bounds']['height'])
         
         self.origin(node)
@@ -154,12 +238,14 @@ if __name__ == "__main__":
 
     mcd = MCD()
     mcd.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0007.json'))
+#    mcd.apply(mcd.DOM, nbr_nodes_threshold = 1)
+    mcd.mark_main_nodes(node = mcd.DOM, mode = "ancestry")
+#    print(mcd.webpage_url)
+#     mcd.apply(mcd.DOM, min_ratio_threshold = 0.5, nbr_nodes_threshold = 3)
     
-    mcd.apply(mcd.DOM, min_ratio_threshold = 0.5, nbr_nodes_threshold = 3)
+#    mcd.update_DOM_tree()
     
-    mcd.update_DOM_tree()
-    
-    arr = mcd.flatten(mcd.DOM, features = ['MCD.iscontent', 'MCD.mark'])
+    arr = mcd.flatten(mcd.DOM, features = ['xpath', 'MCD.main_node'])
     print(arr[arr[:,1] == "1"])
     
 

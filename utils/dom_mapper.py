@@ -262,6 +262,28 @@ class DOM_Mapper:
         pass
     
     
+    def set_feature_by_path(self, node, feature_path, feature_value):
+        
+        try:
+            feature_seq = feature_path.split(".")
+            feature_container = feature_seq[-2]
+            needed_feature = feature_seq[-1]
+            feature_node = node.copy()
+            
+            for feature in feature_container:
+                
+                feature_node = feature_node[feature]
+                
+                pass
+        except:
+            pass
+        
+        
+        feature_node[needed_feature] = feature_value
+        
+        pass
+    
+    
     ##################    NEEDS AN UPDATE!!    #####################
     def retrieve_DOM_arr_file(self, file_path):
         
@@ -406,6 +428,22 @@ class DOM_Mapper:
     
     
     
+#    def map_all(self, node, att, value):
+#        
+#        self.map(node, fun1 = self.__map_all, args = [att, value])
+#        
+#        pass
+#    
+#    
+#    def __map_all(self, node, args):
+#        
+#        
+#        
+#        return node
+#        
+#        pass
+    
+    
     pass
 
 
@@ -413,11 +451,10 @@ class DOM_Mapper:
 
 if __name__ == '__main__':
     
-    dr = DOM_Mapper()
-
-    dr.retrieve_DOM_tree('../datasets/extracted_data/0000.json')
-    
-    
+#    dr = DOM_Mapper()
+#
+#    dr.retrieve_DOM_tree('../datasets/extracted_data/0007.json')
+    print(dr.DOM.keys())
     #df = pd.DataFrame(dr.toArray(['tagName','mark']))
     #print(df)
     #dr.map(dr.DOM, fun1 = lambda x: x if print(x['xpath']) else x)

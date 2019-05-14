@@ -32,7 +32,12 @@ def detect(input_file, output_file, mark_path = "CETD.mark", mark_value = "1"):
     
         input_file = os.path.realpath(input_file)
         output_file = os.path.realpath(output_file)
-        CMD('webpage_filter.js', input_file, output_file, mark_path = mark_path, mark_value = mark_value)
+        CMD(
+	'c:\\users\\mohamedhmini\\data_analysis_doodlings\\iww\\iww\\detector\\webpage_filter.js', 
+	input_file, 
+	output_file, 
+	mark_path = mark_path, 
+	mark_value = mark_value)
         
         pass
     

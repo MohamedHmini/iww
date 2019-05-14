@@ -64,12 +64,12 @@ def vectors_coherence(expected_vect, observed_vects):
         
         final_max_distance = get_max_distance(final_expected_vect, max_val = 0)
         
-        print("EXPECTED VECTOR : {}".format(final_expected_vect))
-        print("OBSERVED VECTOR : {}".format(observed_vect))
+#        print("EXPECTED VECTOR : {}".format(final_expected_vect))
+#        print("OBSERVED VECTOR : {}".format(observed_vect))
         
         coherence = euclidean_similarity(final_expected_vect, observed_vect, final_max_distance)
         
-        print("COHERENCE : {}".format(coherence))
+#        print("COHERENCE : {}".format(coherence))
     
     else:
         return 0
