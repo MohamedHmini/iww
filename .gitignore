@@ -7,3 +7,5 @@ conda activate base
 /datasets/
 /extractor/test.png
 /features_extraction/sim_mat.csv
+/.nothing
+/test.py
