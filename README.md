@@ -11,7 +11,7 @@ currently, the library offers many functionalities to be exploited & some intere
   - DOM tags detector script (highlighting the chosen nodes).
 
 
-P.S : still in 'development phase'
+P.S : the documentation isn't available yet.
 
 
 
