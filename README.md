@@ -4,8 +4,9 @@ an AI based web-mining library for web-content-extraction using machine learning
 some of the features can be exploited now, and they are available in the code, things such as:
   
   - DOM extractor, mapper, reducer and flattening functionality...
-  - lists detector algorithm.
-  - main content detector algorithm.
+  - LD, Lists detector algorithm.
+  - MCD, Main content detector algorithm.
+  - MCD algorithms results integrator method.
   - CETD algorithm.
   - DOM tags detector script (highlighting the chosen nodes).
 
