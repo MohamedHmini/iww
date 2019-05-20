@@ -160,6 +160,7 @@ class MCD(DOM_Mapper):
         node['MCD']['width'] = node['bounds']['width'] / self.DOM['bounds']['width'] if self.DOM['bounds']['width'] != 0 else 1
         node['MCD']['height'] = node['bounds']['height'] / self.DOM['bounds']['height'] if self.DOM['bounds']['height'] != 0 else 1
         node['MCD']['area'] = (node['bounds']['width']*node['bounds']['height']) / (self.DOM['bounds']['width']*self.DOM['bounds']['height'])
+#        node['MCD']['text'] = len(node['text']) if 'text' in node.keys() else 0 / len(self.DOM['text'])
         
         self.origin(node)
         
@@ -236,17 +237,18 @@ class MCD(DOM_Mapper):
 
 if __name__ == "__main__":
 
-    mcd = MCD()
-    mcd.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0007.json'))
+#    mcd = MCD()
+#    mcd.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0007.json'))
 #    mcd.apply(mcd.DOM, nbr_nodes_threshold = 1)
-    mcd.mark_main_nodes(node = mcd.DOM, mode = "ancestry")
+    print(mcd.DOM['children'][0]['MCD'])
+#    mcd.mark_main_nodes(node = mcd.DOM, mode = "ancestry")
 #    print(mcd.webpage_url)
 #     mcd.apply(mcd.DOM, min_ratio_threshold = 0.5, nbr_nodes_threshold = 3)
     
 #    mcd.update_DOM_tree()
     
-    arr = mcd.flatten(mcd.DOM, features = ['xpath', 'MCD.main_node'])
-    print(arr[arr[:,1] == "1"])
+#    arr = mcd.flatten(mcd.DOM, features = ['xpath', 'MCD.text'])
+#    print(arr)
     
 
     pass
