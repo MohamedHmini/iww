@@ -15,6 +15,7 @@ currently, the library offers many functionalities to be exploited & some intere
 P.S : 
    - the documentation isn't available yet.
    - LD & MCD algorithms are to be released as a research article in the near future.
+   - the pip package of iww will be available online as soon as possible.
 
 ## USE CASE EXAMPLE :
 
