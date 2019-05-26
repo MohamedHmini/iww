@@ -21,14 +21,14 @@ P.S :
 
 ### 1- extraction :
 
-```
+```python
 from iww.extractor import extractor
 from iww.detector import detector
 from iww.features_extraction.lists_detector import Lists_Detector as LD
 from iww.features_extraction.main_content_detector import MCD
 ```
 
-```
+```python
 url = "https://www.theiconic.com.au/catalog/?q=kids%20sunglasses"
 json_file = "./iconic.json"
 
@@ -40,7 +40,7 @@ extractor.extract(
 
 ### 2- data exploratory analysis :
 
-```
+```python
 from iww.utils.dom_mapper import DOM_Mapper as DM
 
 dm = DM()
@@ -54,7 +54,7 @@ print("total number of nodes : {}".format(dm.DOM['CETD']['tagsCount']))
 
 ### 3- LD algorithm :
 
-```
+```python
 ld = LD()
 ld.retrieve_DOM_tree(file_path = "./iconic.json")
 ld.apply(
@@ -65,7 +65,7 @@ ld.apply(
 ld.update_DOM_tree()
 ```
 
-```
+```python
 detector.detect(
     input_file = "./iconic.json", 
     output_file = "./iconic_ld.png",
@@ -78,7 +78,7 @@ detector.detect(
 
 ### 4- MCD algorithm :
 
-```
+```python
 mcd = MCD()
 mcd.retrieve_DOM_tree("./iconic.json")
 mcd.apply(
@@ -89,7 +89,7 @@ mcd.apply(
 mcd.update_DOM_tree()
 ```
 
-```
+```python
 detector.detect(
     input_file = "./iconic.json", 
     output_file = "./iconic_mcd.png",
@@ -102,7 +102,7 @@ detector.detect(
 
 ### 5- LD/MCD integration (main list detection) :
 
-```
+```python
 mcd.integrate_other_algorithms_results(
     node = mcd.DOM, 
     nbr_nodes = 1,
@@ -112,7 +112,7 @@ mcd.integrate_other_algorithms_results(
 mcd.update_DOM_tree()
 ```
 
-```
+```python
 detector.detect(
     input_file = "./iconic.json", 
     output_file = "./iconic_main_list.png",
