@@ -215,7 +215,7 @@ if __name__ == '__main__':
 # =============================================================================
     cetd = CETD()
      
-    cetd.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/test.json'))
+    cetd.retrieve_DOM_tree(os.path.realpath('../extractor/test.json'))
      
 #    cetd.count_tags(cetd.DOM)
 #    cetd.text_density(cetd.DOM)
@@ -226,8 +226,8 @@ if __name__ == '__main__':
 #    cetd.mark_content(cetd.DOM, cetd.threshold)
 #    cetd.update_DOM_tree()
     cetd.apply(cetd.DOM) 
-#    cetd.update_DOM_tree()
-    arr = cetd.flatten(cetd.DOM, ['CETD.tagsCount','CETD.densitySum'])
+    cetd.update_DOM_tree()
+    arr = cetd.flatten(cetd.DOM, ['CETD.mark'])
     print(pd.DataFrame(arr))
 # =============================================================================
     

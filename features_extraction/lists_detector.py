@@ -468,20 +468,20 @@ class Lists_Detector(DOM_Mapper):
 
 if __name__ == '__main__':
     
-#    lists = Lists_Detector()
+    lists = Lists_Detector()
 #    cetd = CETD()
 #    lists.DOM = DOM
 #    lists.meta_data = meta
 #    lists.webpage_url= url
-#    lists.retrieve_DOM_tree(os.path.realpath('../datasets/extracted_data/0007.json'))
-#    lists.apply(lists.DOM, coherence_threshold = (0.80,1), sub_tags_threshold = 1)
-    print(list(lists.DOM['children'][0]['LISTS']['adjust'].values())[1:])
+    lists.retrieve_DOM_tree(os.path.realpath('../extractor/test.json'))
+    lists.apply(lists.DOM, coherence_threshold = (0.80,1), sub_tags_threshold = 1)
+#    print(list(lists.DOM['children'][0]['LISTS']['adjust'].values())[1:])
 
 #    lists.coherence_threshold =(0.80,1)
 #    lists.get_final_results(lists.xpaths, lists.X)
 #    lists.mark_results(lists.DOM)
 #    lists.DOM_file_path = os.path.realpath('../datasets/extracted_data/0010.json')
-#    lists.update_DOM_tree()
+    lists.update_DOM_tree()
 #    print(lists.DOM['tagsCount'])
 #    DOM = lists.DOM
 #    meta = lists.meta_data
