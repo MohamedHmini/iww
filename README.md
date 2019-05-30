@@ -1,6 +1,6 @@
 # IWW-IntelliWebWrapper- [development phase] 🖖🐼
 
-![](/iww.png)
+![](/iww2.png)
 
 an AI based web-mining library for web-content-extraction using machine learning algorithms.
 
