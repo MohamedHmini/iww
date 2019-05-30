@@ -1,5 +1,7 @@
 # IWW-IntelliWebWrapper- [development phase] 🖖🐼
 
+![](/iww.png)
+
 an AI based web-mining library for web-content-extraction using machine learning algorithms.
 
 currently, the library offers many functionalities to be exploited & some interesting algos to look at:
@@ -16,6 +18,8 @@ P.S :
    - the documentation isn't available yet.
    - LD & MCD algorithms are to be released as a research article in the near future.
    - the pip package of iww will be available online as soon as possible.
+
+
 
 ## USE CASE EXAMPLE :
 
@@ -47,7 +51,7 @@ dm = DM()
 dm.retrieve_DOM_tree("./iconic.json")
 print("total number of nodes : {}".format(dm.DOM['CETD']['tagsCount']))
 ```
-> result : total numbre of nodes : 2098
+> total numbre of nodes : 2098
 
 ![](/test/webpage.PNG)
 
