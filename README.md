@@ -128,4 +128,7 @@ detector.detect(
 ![](/test/main_list.png)
 
 
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
+
 **MOHAMED-HMINI 2019**
