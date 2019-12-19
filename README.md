@@ -1,6 +1,12 @@
 # IWW-IntelliWebWrapper- [development phase] 🖖🐼
 
-![](/iww2.png)
+![](/iww2.png)<br/>
+[![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE)
+[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
+[![GitHub version](https://badge.fury.io/gh/Naereen%2FStrapDown.js.svg)](https://github.com/Naereen/StrapDown.js)
+[![Generic badge](https://img.shields.io/badge/docs-passing-<green>.svg)](https://shields.io/)
+[![Ask Me Anything !](https://img.shields.io/badge/Ask%20me-anything-1abc9c.svg)](https://GitHub.com/Naereen/ama)
+
 
 an AI based web-mining library for web-content-extraction using machine learning algorithms.
 
