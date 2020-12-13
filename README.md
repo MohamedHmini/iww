@@ -1,4 +1,4 @@
-# IWW-IntelliWebWrapper- [development phase] 🖖🐼
+# IWW-IntelliWebWrapper
 
 ![](/iww2.png)<br/>
 [![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE)
