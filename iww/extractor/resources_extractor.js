@@ -1,7 +1,9 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const commander = require('commander');
-const rgb2hex = require('rgb-hex')
+// const rgb2hex = require('rgb-hex');
+const rgb2hex = import('rgb-hex')
+// import * from "rgb-hex"
 
 commander
   .version('0.1.0')
@@ -10,14 +12,14 @@ commander
   .parse(process.argv);
 
 
-
 (async() => {
 
-        
+        let options = commander.opts();        
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
 	console.log("HTTP request is about to be sent...")
-        await page.goto(commander.site);
+        console.log(options.site)
+        await page.goto(options.site);
 	console.log("HTTP request is sent!")
 
         await page.setViewport({ width: 1600, height: 4000});
@@ -235,10 +237,10 @@ commander
 	var document = {
 		"DOM":traversed_DOM_tree,
                 "meta_data":meta_data,
-                "webpage_url":commander.site
+                "webpage_url":options.site
         }
 
-        fs.writeFile(commander.filedirectory,JSON.stringify(document),(err)=>{})
+        fs.writeFile(options.filedirectory,JSON.stringify(document),(err)=>{})
 	console.log("MISSION COMPLETED!")
         // console.log(document)
 	await browser.close();
