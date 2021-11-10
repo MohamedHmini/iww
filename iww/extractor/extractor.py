@@ -1,7 +1,7 @@
 import os
 import sys
 import subprocess
-
+import iww
 
 
 
@@ -43,7 +43,11 @@ def extract(url, destination):
     if os.path.exists(destination) == False:
     
         file_path = os.path.realpath(destination)
-        CMD('c:\\users\\mohamedhmini\\data_analysis_doodlings\\iww\\iww\\extractor\\resources_extractor.js', url, file_path)
+        full_path = os.path.realpath(__file__)
+
+        print(f'{os.path.dirname(full_path)}/resources_extractor.js', url, file_path)
+
+        CMD(f'{os.path.dirname(full_path)}/resources_extractor.js', url, file_path)
         
         pass
     

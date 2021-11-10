@@ -36,14 +36,15 @@ var getJsonizedDOM = (file) => {
 
 
 (async() => {
+      let options = commander.opts();      
 
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
 
-        var webpage_json = await getJsonizedDOM(commander.inputFile)        
+        var webpage_json = await getJsonizedDOM(options.inputFile)        
 	var input_data = {
 		"webpage_json":webpage_json,
-		"commander":commander
+		"commander":options
 	}	
 
         await page.goto(webpage_json.webpage_url);
@@ -158,7 +159,7 @@ var getJsonizedDOM = (file) => {
 
         console.log("NUMBER OF SELECTED NODES : " + counter)
         await page.screenshot({
-          path:commander.outputFile
+          path:options.outputFile
         });
 
 
