@@ -59,7 +59,7 @@ print("total number of nodes : {}".format(dm.DOM['CETD']['tagsCount']))
 ```
 > total numbre of nodes : 2098
 
-![](/test/webpage.PNG)
+![](iww/test/webpage.PNG)
 
 
 ### 3- LD algorithm :
@@ -84,7 +84,7 @@ detector.detect(
 )
 ```
 
-![](/test/ld.png)
+![](iww/test/ld.png)
 
 ### 4- MCD algorithm :
 
@@ -108,7 +108,7 @@ detector.detect(
 )
 ```
 
-![](/test/mcd.png)
+![](iww/test/mcd.png)
 
 ### 5- LD/MCD integration (main list detection) :
 
@@ -131,7 +131,7 @@ detector.detect(
 )
 ```
 
-![](/test/main_list.png)
+![](iww/test/main_list.png)
 
 
 ## License
